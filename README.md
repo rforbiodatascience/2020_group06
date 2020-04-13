@@ -10,3 +10,10 @@
 This is a repository to use for version control of our data and scripts when working with R and RStudio.
 
 This project serves as a repository for the final project organization and version control requirements of the course 22100 (DTU).
+
+
+## Data
+
+The data is obtained from:
+
+https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
