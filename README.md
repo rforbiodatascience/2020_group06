@@ -1,5 +1,7 @@
 # Reproducible Data Analysis - Final Project
-================
+
+---
+
 ## Sule Altintas, Sebastian Sbirna & Stanley Frederiksen <br>
 ### 14th of May 2020
 
