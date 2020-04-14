@@ -1,0 +1,56 @@
+---
+title: "TestScript"
+author: "Stanley"
+date: "13/4/2020"
+output: pdf_document
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Loading the data
+```{r,echo=FALSE}
+df<- read_csv("_raw/COVID19_open_line_list.csv")
+df
+
+```
+
+## Including Plots
+```{r pressure, echo=FALSE}
+sym<-df %>%
+  select(symptoms) %>%
+  drop_na() %>%
+  str_split(.," , ")
+
+```
+
+# Extracting symptoms
+```{r}
+
+s<-as.tibble(df$symptoms)
+
+colnames(s)<-as.character("symptom")
+
+
+# 
+s2<-s %>%
+  transform(symptom = str_split(symptom, ",|;")) %>%
+  unnest() %>%
+  drop_na() %>%
+  as.data.frame(str_replace(s2$symptom,"^ ", "")) %>%
+  distinct_all()
+
+
+nys<-as.data.frame(str_replace(s2$symptom,"^ ", ""))
+
+colnames(nys)<-as.character("s")
+
+
+nys %>%
+  distinct(s)
+
+
+```
+
