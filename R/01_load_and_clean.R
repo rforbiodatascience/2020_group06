@@ -9,8 +9,9 @@ rm(list = ls())
 ############################ - Load libraries - ################################
 ################################################################################
 
-library('tidyverse')
-library('lubridate')
+library(tidyverse)
+library(lubridate)
+library(testthat)
 
 ################################################################################
 ########################### - Define functions - ###############################
@@ -39,16 +40,21 @@ df8 <- read_csv('.//data//_raw//time_series_covid_19_recovered.csv')
 print('The structure of df1 is: ')
 str(df1)
 
-################## - RENAME COLUMNS - ####################
+################################# - RENAME & MUTATE COLUMNS - #################################
+
 daily_covid_trends_df <-
   df1 %>%
   rename("IDKey" = "SNo") %>%
   mutate(ObservationDate = mdy(ObservationDate)) %>%
   rename("Province" = `Province/State`) %>%
   rename("Country" = `Country/Region`) %>%
-  select(-`Last Update`)
+  select(-`Last Update`) %>%
+  rename("TotalConfirmed" = 'Confirmed') %>%
+  rename("TotalDeaths" = 'Deaths') %>%
+  rename("TotalRecovered" = 'Recovered')
 
-################## - Standarize PROVINCE data (removing data inconstencies) - ####################
+################################# - Standarize PROVINCE data (removing data inconstencies) - ###################################
+
 daily_covid_trends_df <-
   daily_covid_trends_df %>%
 
@@ -71,7 +77,8 @@ daily_covid_trends_df <-
   mutate(Province = replace_na(Province, 'Unassigned Location'))
 
 
-################## - Standarize COUNTRY data (removing data inconstencies) - ####################
+################################# - Standarize COUNTRY data (removing data inconstencies) - ###################################
+
 daily_covid_trends_df <-
   daily_covid_trends_df %>%
 
@@ -95,6 +102,83 @@ daily_covid_trends_df <-
 
   # Convert 'Diamond Princess' and 'MS Zaandam' Country to 'Others'
   mutate(Country = str_replace_all(Country, pattern = '(Diamond Princess)|(MS Zaandam)', replacement = 'Others'))
+
+
+################################# - Fix MISSING VALUES in Province column - ###################################
+
+# Here, if the province is unknown, we just assign it to the name of the country
+daily_covid_trends_df <-
+  daily_covid_trends_df %>%
+  mutate(Province = if_else(Province == 'Unassigned Location',
+                            true = Country,
+                            false = Province))
+
+################################# - Use TESTS for Primary Key uniqueness - ###################################
+
+test_that("IDKey is unique for each row in the dataset", {
+  expect_true(
+    daily_covid_trends_df %>%
+      group_by(IDKey) %>%
+      count(IDKey) %>%
+      filter(n > 1) %>%
+      nrow() == 0,
+
+    info = 'The Primary ID Key of daily_covid_trends_df is not always unique!'
+  )
+})
+
+################################# - Converting FACTORS - ###################################
+
+daily_covid_trends_df <-
+  daily_covid_trends_df %>%
+  mutate(Province = as_factor(Province)) %>%
+  mutate(Country = as_factor(Country))
+
+
+###################################################################################################
+################### - Wrangle data from 'df2': COVID19_line_list_data.csv - #######################
+###################################################################################################
+
+print('The structure of df2 is: ')
+str(df2)
+
+################################ - REMOVING UNNECESSARY COLUMNS - #############################
+patient_data_first_df <-
+  df2 %>%
+
+  # Remove empty columns
+  select(-c(X4, X22, X23, X24, X25, X26, X27)) %>%
+
+  # Remove 'summary' column, since its data is already summarized through the other columns
+  select(-summary) %>%
+
+  # Remove non-relevant columns for our analysis
+  select(-c(source, link, If_onset_approximated, case_in_country))
+
+
+################################# - RENAME & MUTATE COLUMNS - #################################
+
+patient_data_first_df <-
+  patient_data_first_df %>%
+  rename("IDKey" = "id") %>%
+  mutate(`reporting date` = mdy(`reporting date`)) %>%
+  rename("date_reported" = `reporting date`) %>%
+  rename("date_onset" = "symptom_onset") %>%
+  mutate(date_onset = mdy(date_onset)) %>%
+  rename('date_admission_hospital' = 'hosp_visit_date') %>%
+  mutate(date_admission_hospital = mdy(date_admission_hospital)) %>%
+  mutate(exposure_start = mdy(exposure_start)) %>%
+  mutate(exposure_end = mdy(exposure_end)) %>%
+  rename('visited_Wuhan' = `visiting Wuhan`) %>%
+  rename('lives_in_Wuhan' = `from Wuhan`) %>%
+  mutate(lives_in_Wuhan = replace_na(lives_in_Wuhan, 0)) %>%
+  rename("is_dead" = "death") %>%
+  rename("is_recovered" = "recovered") %>%
+  mutate(is_recovered = if_else(is_recovered != 0, 1, 0)) %>%
+  mutate(is_dead = if_else(is_dead != 0, 1, 0))
+
+# TODO: MORE WRANGLING
+
 
 # Write data
 # ------------------------------------------------------------------------------
