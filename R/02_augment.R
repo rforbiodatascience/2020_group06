@@ -23,6 +23,15 @@ my_data_clean <- read_tsv(file = "data/02_my_data_clean.tsv")
 my_data_clean_aug <- my_data_clean # %>% ...
 
 
+########################### - Perform BINNING on AGE data (for consistency with our other datasets) - ###########################
+
+# Within this dataset, we
+
+patient_data_first_df %>%
+  group_by(age) %>%
+  count() %>%
+  print(n = Inf)
+
 # Write data
 # ------------------------------------------------------------------------------
 write_tsv(x = my_data_clean_aug,
