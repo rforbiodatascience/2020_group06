@@ -688,18 +688,4 @@ ts_confirmed_world_df %>% select(country) %>% group_by(country) %>% count() %>% 
 # Write data
 # ------------------------------------------------------------------------------
 # write_tsv(x = my_data_clean,
-#           path = "data/02_my_data_clean.tsv")
-
-
-
-# # Wrangle data
-# # ------------------------------------------------------------------------------
-# bl62 <- bl62 %>%
-#   select(X1:V) %>%
-#   slice(1:20)
-#
-#
-# # Write data
-# # ------------------------------------------------------------------------------
-# write_tsv(x = bl62,
-#           path = "data/01_my_data.tsv")
+#           path = "data/01_my_data_clean.tsv")
