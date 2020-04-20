@@ -447,6 +447,68 @@ ts_confirmed_world_df <-
 
 
 
+##############################################################################################################
+################### - Wrangle data from 'df5': time_series_covid_19_confirmed_US.csv - #######################
+##############################################################################################################
+
+print('The structure of df5 is: ')
+str(df5)
+
+################################ - REMOVING UNNECESSARY COLUMNS - #############################
+
+ts_confirmed_US_df <-
+  df5 %>%
+
+  # Remove the first five columns, which are universal geolocation identifiers
+  select(-c(1:5)) %>%
+
+  # Remove the combined string of county, province and country
+  select(-Combined_Key)
+
+
+################################# - RENAME COLUMNS - #################################
+
+ts_confirmed_US_df <-
+  ts_confirmed_US_df %>%
+
+  # Rename the county
+  rename("administration" = "Admin2") %>%
+
+  # Rename the province
+  rename("province" = "Province_State") %>%
+
+  # Rename the country
+  rename("country" = "Country_Region") %>%
+
+  # Rename the Lat and Long variables to lower-case, as good practice
+  rename('lat' = 'Lat') %>%
+  rename('long' = 'Long_')
+
+
+############################# - TIDY the dataset into LONG FORMAT - #############################
+
+ts_confirmed_US_df <-
+  ts_confirmed_US_df %>%
+  pivot_longer(-c(1:5),
+               names_to = 'date_observation',
+               values_to = 'cases')
+
+
+############################# - CONVERT DATES from chr to date - #############################
+
+ts_confirmed_US_df <-
+  ts_confirmed_US_df %>%
+  mutate(date_observation = mdy(date_observation))
+
+
+
+
+
+
+
+
+
+
 ########################################################################################################
 ################### - Wrangle data from 'df6': time_series_covid_19_deaths.csv - #######################
 ########################################################################################################
@@ -542,6 +604,71 @@ ts_deaths_world_df <-
 
 ts_deaths_world_df <-
   ts_deaths_world_df %>%
+  mutate(date_observation = mdy(date_observation))
+
+
+
+
+
+
+
+
+
+
+##############################################################################################################
+################### - Wrangle data from 'df7': time_series_covid_19_deaths_US.csv - #######################
+##############################################################################################################
+
+print('The structure of df7 is: ')
+str(df7)
+
+################################ - REMOVING UNNECESSARY COLUMNS - #############################
+
+ts_deaths_US_df <-
+  df7 %>%
+
+  # Remove the first five columns, which are universal geolocation identifiers
+  select(-c(1:5)) %>%
+
+  # Remove the combined string of county, province and country
+  select(-Combined_Key) %>%
+
+  # Remove the county population, since we have a separate dataset for that
+  select(-Population)
+
+
+################################# - RENAME COLUMNS - #################################
+
+ts_deaths_US_df <-
+  ts_deaths_US_df %>%
+
+  # Rename the county
+  rename("administration" = "Admin2") %>%
+
+  # Rename the province
+  rename("province" = "Province_State") %>%
+
+  # Rename the country
+  rename("country" = "Country_Region") %>%
+
+  # Rename the Lat and Long variables to lower-case, as good practice
+  rename('lat' = 'Lat') %>%
+  rename('long' = 'Long_')
+
+
+############################# - TIDY the dataset into LONG FORMAT - #############################
+
+ts_deaths_US_df <-
+  ts_deaths_US_df %>%
+  pivot_longer(-c(1:5),
+               names_to = 'date_observation',
+               values_to = 'cases')
+
+
+############################# - CONVERT DATES from chr to date - #############################
+
+ts_deaths_US_df <-
+  ts_deaths_US_df %>%
   mutate(date_observation = mdy(date_observation))
 
 
