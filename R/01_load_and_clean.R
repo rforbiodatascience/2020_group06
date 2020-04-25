@@ -814,5 +814,5 @@ ts_confirmed_world_df %>% select(country) %>% group_by(country) %>% count() %>% 
 
 # Write data
 # ------------------------------------------------------------------------------
-# write_tsv(x = my_data_clean,
+#write_tsv(x = patient_data_first_df,
 #           path = "data/01_my_data_clean.tsv")
