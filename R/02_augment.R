@@ -205,12 +205,15 @@ final_ts_world_df <-
   final_ts_world_df %>%
   left_join(population_by_country_df, by = 'country') %>%
 
-  group_by(province, country, date_observation) %>%
-
   # Create new variables calculating the number of new cases per day
   mutate(new_confirmed = total_confirmed - lag(total_confirmed, default = 0)) %>%
   mutate(new_deaths = total_deaths - lag(total_deaths, default = 0)) %>%
   mutate(new_recovered = total_recovered - lag(total_recovered, default = 0)) %>%
+
+  # Reset the default lagging value to 0 whenever switching to a new province or country
+  mutate(new_confirmed = if_else(new_confirmed < 0, true = 0, false = new_confirmed)) %>%
+  mutate(new_deaths = if_else(new_deaths < 0, true = 0, false = new_deaths)) %>%
+  mutate(new_recovered = if_else(new_recovered < 0, true = 0, false = new_recovered)) %>%
 
   # Create new variables representing the number of people infected per/in 1 million persons (considering the country population!)
   mutate(total_confirmed_per_mil_pop = total_confirmed / (total_population/1000000)) %>%
