@@ -16,7 +16,7 @@ library(lubridate)
 ########################### - Define functions - ###############################
 ################################################################################
 
-#source(file = "R/99_func.R")
+source(file = "R/99_func.R")
 
 ################################################################################
 ############################## - Load data - ###################################
@@ -30,6 +30,7 @@ df5 <- read_csv('.//data//_raw//time_series_covid_19_confirmed_US.csv')
 df6 <- read_csv('.//data//_raw//time_series_covid_19_deaths.csv')
 df7 <- read_csv('.//data//_raw//time_series_covid_19_deaths_US.csv')
 df8 <- read_csv('.//data//_raw//time_series_covid_19_recovered.csv')
+df9 <- read_csv('.//data//_raw//wpp2019_total_population.csv')
 
 
 
@@ -47,6 +48,7 @@ df8 <- read_csv('.//data//_raw//time_series_covid_19_recovered.csv')
 print('The structure of df1 is: ')
 str(df1)
 
+
 ################################# - RENAME COLUMNS - #################################
 
 daily_covid_trends_df <-
@@ -60,6 +62,7 @@ daily_covid_trends_df <-
   rename("total_confirmed" = 'Confirmed') %>%
   rename("total_deaths" = 'Deaths') %>%
   rename("total_recovered" = 'Recovered')
+
 
 ################################# - Standarize PROVINCE data (removing data inconstencies) - ###################################
 
@@ -108,6 +111,9 @@ daily_covid_trends_df <-
   # Convert 'Mainland China' to 'China', for consistency with the other datasets
   mutate(country = str_replace_all(country, pattern = 'Mainland China', replacement = 'China')) %>%
 
+  # Convert 'Burma' to 'Myanmar'
+  mutate(country = str_replace_all(country, pattern = 'Burma', replacement = 'Myanmar')) %>%
+
   # Convert "('St. Martin',)" to 'St. Martin'
   mutate(country = str_replace_all(country, pattern = "\\(\\'St. Martin\\',\\)", replacement = 'St. Martin')) %>%
 
@@ -132,6 +138,7 @@ daily_covid_trends_df <-
   # Remove data about 'Others' country, i.e. from Diamond Princess, Grand Princess and MS Zandaam, since they are not belonging to any actual countries
   filter(country != 'Others')
 
+
 ############################# - Transform MISSING VALUES in PROVINCE column - #############################
 
 # Here, if the province is unknown, we just assign it to the name of the country
@@ -140,14 +147,6 @@ daily_covid_trends_df <-
   mutate(province = if_else(province == 'Unassigned Location',
                             true = country,
                             false = province))
-
-
-################################# - Converting FACTORS - ###################################
-
-daily_covid_trends_df <-
-  daily_covid_trends_df %>%
-  mutate(province = factor(province)) %>%
-  mutate(country = factor(country))
 
 
 
@@ -165,6 +164,7 @@ daily_covid_trends_df <-
 print('The structure of df2 is: ')
 str(df2)
 
+
 ################################ - REMOVING UNNECESSARY COLUMNS - #############################
 patient_data_first_df <-
   df2 %>%
@@ -179,7 +179,7 @@ patient_data_first_df <-
   select(-c(id, source, link, If_onset_approximated, case_in_country))
 
 
-################################# - RENAME COLUMNS - #################################
+################################# - RENAME AND WRANGLE COLUMNS - #################################
 
 patient_data_first_df <-
   patient_data_first_df %>%
@@ -246,8 +246,11 @@ patient_data_first_df <-
 patient_data_first_df <-
   patient_data_first_df %>%
 
-  # Convert 'US' to 'USA', for consistency with the other datasets
+  # Convert 'USA' to 'US', for consistency with the other datasets
   mutate(country = str_replace_all(country, pattern = 'USA', replacement = 'US')) %>%
+
+  # Convert 'Burma' to 'Myanmar'
+  mutate(country = str_replace_all(country, pattern = 'Burma', replacement = 'Myanmar')) %>%
 
   # Properly adjust country for Macau, so that it is 'Macau' and not 'China' (consistent with the other datasets)
   mutate(country = if_else((province == 'Macau'),
@@ -282,7 +285,7 @@ patient_data_first_df <-
   mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(chill,)|(cold,)', replacement = 'chills,')) %>%
 
   # Fix problems associated with 'sore throat'
-  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(itchy throat)|(throat discomfort)', replacement = 'sore throat')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(itchy throat)|(throat discomfort)|(throat pain)', replacement = 'sore throat')) %>%
 
   # Fix problems associated with 'fever'
   mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(feaver)|(feve\\\\)|(high fever)|(mild fever)', replacement = 'fever')) %>%
@@ -296,22 +299,14 @@ patient_data_first_df <-
   # Fix problems associated with 'runny nose' (i.e. nasal discharge or snot = mucus from the nose) [vs (sputum = mucus from the airways)]
   mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(runny nose)|(sneeze)', replacement = 'nasal discharge')) %>%
 
-  # Fix problems associated with 'flu symptoms'
-  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(flu)\\W$', replacement = '\\1 symptoms')) %>%
+  # Fix problems associated with 'flu'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'flu symptoms', replacement = 'flu')) %>%
 
   # Fix problems associated with 'cough'
   mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(mild )?cough(ing)?', replacement = 'cough')) %>%
 
   # Fix problems associated with 'fatigue'
   mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(tired)', replacement = 'fatigue'))
-
-
-################################# - Converting FACTORS - ###################################
-
-patient_data_first_df <-
-  patient_data_first_df %>%
-  mutate(province = factor(province)) %>%
-  mutate(country = factor(country))
 
 
 
@@ -329,10 +324,267 @@ patient_data_first_df <-
 print('The structure of df3 is: ')
 str(df3)
 
-################################ - REMOVING UNNECESSARY COLUMNS - #############################
-#patient_data_second_df <-
-  # df3 %>%
 
+################################ - REMOVING UNNECESSARY COLUMNS - #############################
+patient_data_second_df <-
+  df3 %>%
+
+  # Remove highly sparse data columns
+  select(-c(starts_with('travel_'), reported_market_exposure, starts_with('chronic_'), sequence_available, notes_for_discussion, `wuhan(0)_not_wuhan(1)`)) %>%
+
+  # Remove empty columns
+  select(-c(X34:X45)) %>%
+
+  # Remove non-relevant columns for our analysis
+  select(-c(ID, city, geo_resolution, additional_information, source)) %>%
+  select(age : date_death_or_discharge)
+
+
+############################# - Fix MISSING VALUES in all columns - #############################
+
+patient_data_second_df <-
+  patient_data_second_df %>%
+  na_if('N/A') %>%
+  na_if('#N/A')
+
+
+################################# - RENAME AND WRANGLE COLUMNS - #################################
+
+patient_data_second_df <-
+  patient_data_second_df %>%
+
+  # Rename the gender column
+  rename("gender" = "sex") %>%
+
+  # Fix the Male/male & Female/female case errors
+  mutate(gender = str_to_lower(gender)) %>%
+
+  # Rename the latitude and longitude, for consistency reasons, and convert to double
+  rename("lat" = "latitude") %>%
+  rename("long" = "longitude") %>%
+  mutate(lat = as.double(lat)) %>%
+  mutate(long = as.double(long)) %>%
+
+  # Rename the date of reported infection and convert to date
+  rename("date_observation" = "date_confirmation") %>%
+  mutate(date_observation = dmy(date_observation)) %>%
+
+  # Rename the date of symptom onset and convert to date
+  rename("date_onset" = "date_onset_symptoms") %>%
+  mutate(date_onset = dmy(date_onset)) %>%
+
+  # Convert the date of hospital admissionto 'date'
+  mutate(date_admission_hospital = dmy(date_admission_hospital)) %>%
+
+  # Rename and combine the variables related to Wuhan contact
+  mutate(lives_in_Wuhan = replace_na(lives_in_Wuhan, 0)) %>%
+  mutate(contact_with_Wuhan = case_when(
+    str_detect(lives_in_Wuhan, pattern = ('(0)|([nN]o)|(Chinese)|(live(d)? in.*)|(thai.*)|(used to be)|(.*resident.*)')) ~ 0,
+    TRUE ~ 1
+  )) %>%
+
+  # Remove the old Wuhan-related columns and reorder the columns in the dataframe
+  select(-c(lives_in_Wuhan)) %>%
+
+  # Create new variables for checking whether a person is recovered or dead
+  mutate(is_recovered = if_else(condition = (
+    str_detect(outcome, pattern = '([Dd]ischarge.*)|(recovered)') & is.na(date_death_or_discharge) == FALSE
+  ), true = 1, false = 0)) %>%
+
+  mutate(is_dead = if_else(condition = (
+    str_detect(outcome, pattern = '(death)|(died)') & is.na(date_death_or_discharge) == FALSE
+  ), true = 1, false = 0)) %>%
+
+  select(-c(outcome, date_death_or_discharge)) %>%
+
+  # Renaming the symptoms set
+  rename("symptoms_set" = "symptoms") %>%
+
+  # Re-order the columns as presented in patient_data_first_df
+  # (dplyr's one_of() is really good because it will ignore the columns that are unknown to the new DF)
+  select(one_of(colnames(patient_data_first_df)), everything())
+
+
+################################# - Standarize PROVINCE data (removing data inconstencies) - ###################################
+
+patient_data_second_df <-
+  patient_data_second_df %>%
+
+  # Convert patterns of the type: 'Fukuoka Prefecture' or 'Fukuoka City' to 'Fukuoka'
+  mutate(province = str_replace_all(province, pattern = '(.*) ((Prefecture)|(City))', replacement = '\\1')) %>%
+
+  # Fix problems associated with the Shanxi province
+  mutate(province = str_replace_all(province, pattern = '(.*) \\(.*\\)', replacement = '\\1')) %>%
+  mutate(province = str_replace_all(province, pattern = 'Shaanxi', replacement = 'Shanxi'))
+
+
+################################# - Standarize COUNTRY data (removing data inconstencies) - ###################################
+
+patient_data_second_df <-
+  patient_data_second_df %>%
+
+  # Convert 'Burma' to 'Myanmar'
+  mutate(country = str_replace_all(country, pattern = 'Burma', replacement = 'Myanmar')) %>%
+
+  # Convert 'United Arab Emirates' to 'UAE', for consistency with the other datasets
+  mutate(country = str_replace_all(country, pattern = 'United Arab Emirates', replacement = 'UAE')) %>%
+
+  # Convert 'United Kingdom' to 'UK', for consistency with the other datasets
+  mutate(country = str_replace_all(country, pattern = 'United Kingdom', replacement = 'UK')) %>%
+
+  # Convert 'United States' to 'US', for consistency with the other datasets
+  mutate(country = str_replace_all(country, pattern = 'United States', replacement = 'US')) %>%
+
+  # Properly adjust country for Macau, so that it is 'Macau' and not 'China' (consistent with the other datasets)
+  mutate(country = case_when((province == 'Macau') ~ 'Macau', TRUE ~ country)) %>%
+
+  # # Properly adjust country for Hong Kong, so that it is 'Hong Kong' and not 'China' (consistent with the other datasets)
+  mutate(country = case_when((province == 'Hong Kong') ~ 'Hong Kong', TRUE ~ country))
+
+
+################################# - Replace missing values in PROVINCE & COUNTRY data - ###################################
+
+patient_data_second_df <-
+  patient_data_second_df %>%
+  mutate(province = if_else(is.na(province) == TRUE, true = country, false = province)) %>%
+  mutate(country = if_else(is.na(country) == TRUE, true = province, false = country)) %>%
+
+  # Remove 953 rows with completely missing data
+  filter(is.na(province) == FALSE) # province can now only be NA if country is also NA
+
+
+################################# - Fix small values of AGE data - ###################################
+
+patient_data_second_df <-
+  patient_data_second_df %>%
+
+  # Make a new variable containing only the values of age which can be converted to double
+  mutate(age_dbl = as.double(age)) %>%
+
+  # Reorder the columns in a relevant way
+  select(date_observation:gender, age_dbl, everything()) %>%
+
+  # Fix any age values with decimals to be rounded to full numbers
+  mutate(age_dbl = round(age_dbl))
+
+
+################################# - Wrangle the SYMPTOMS_SET string data - ###################################
+
+patient_data_second_df <-
+  patient_data_second_df %>%
+
+  # Fix comma & formatting issues
+  mutate(symptoms_set = str_replace_all(symptoms_set, ';', ',')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, '(, )\\W+', '\\1')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, ' and ', ', ')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, '(\\w),(\\w)', '\\1, \\2')) %>%
+
+  # Convert all symptoms to lower-case
+  mutate(symptoms_set = str_to_lower(symptoms_set)) %>%
+
+  # Fix specific patterns related to not having symptoms or to unidentifiable case scenarios
+  mutate(symptoms_set = na_if(symptoms_set, 'asymptomatic')) %>%
+  mutate(symptoms_set = na_if(symptoms_set, 'no serious symptoms')) %>%
+  mutate(symptoms_set = na_if(symptoms_set, 'no symptoms')) %>%
+  mutate(symptoms_set = na_if(symptoms_set, 'yes')) %>%
+  mutate(symptoms_set = na_if(symptoms_set, 'similar to a respiratory infection')) %>%
+  mutate(symptoms_set = na_if(symptoms_set, 'lesions on chest radiographs')) %>%
+
+  # Fix other specific errors related to symptoms
+  mutate(symptoms_set = str_replace_all(symptoms_set, ', other symptoms', '')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, ', eventually showed.*', '')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, 'no respiratory symptoms, ', '')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, '(, )lesions', '')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, 'fever 38.1[^,].*cough', 'fever, cough')) %>%
+
+  # Fix problems associated with 'chest pain'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(chest ((distress)|(tightness)))|(pleuritic chest pain)', replacement = 'chest pain')) %>%
+
+  # Fix problems associated with 'dyspnea' (i.e. shortness of breath)
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(anhelation)', replacement = 'dyspnea')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'severe (dyspnea)', replacement = '\\1')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '((breathing difficulty)|(difficulty breathing))', replacement = 'dyspnea')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'shortness( of)? breath', replacement = 'dyspnea')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(anhelation)', replacement = 'dyspnea')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'respiratory ((distress)|(problems)|(symptoms))', replacement = 'dyspnea')) %>%
+
+  # Fix problems associated with 'chills'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(cold)|(rigor)', replacement = 'chills')) %>%
+
+  # Fix problems associated with 'sore throat'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(acute pharyngitis)|(pharynx)|(pharyngalgia)|(pharyngeal ((discomfort)|(dryness)))', replacement = 'sore throat')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(sore throa$)|(throat discomfort)|(dry throat)', replacement = 'sore throat')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'sore throat, sore throat', replacement = 'sore throat')) %>%
+
+  # Fix problems associated with 'fever'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(((low)|(high)) fever)', replacement = 'fever')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(( )?)(fever.*\\(.*\\))', replacement = '\\1fever')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(fever.*)(,)', replacement = 'fever\\2')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '^fever[^,]*$', replacement = 'fever')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'rever', replacement = 'fever')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '^mild$', replacement = 'fever')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'fever[^,]*$', replacement = 'fever')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '37.1 ° c', replacement = 'fever')) %>%
+
+  # Fix problems associated with 'diarrhea'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'diarrh((oea)|(eoa))', replacement = 'diarrhea')) %>%
+
+  # Fix problems associated with 'headache'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(headache)\\.', replacement = '\\1')) %>%
+
+  # Fix problems associated with 'joint pain'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'difficulty walking', replacement = 'joint pain')) %>%
+
+  # Fix problems associated with 'malaise'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(physical discomfort)|(poor physical condition)', replacement = 'malaise')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(discomfort)|(general malaise)', replacement = 'malaise')) %>%
+
+  # Fix problems associated with 'muscle pain'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'musc((le )|(ular ))((soreness)|(ache(s)?)|(stiffness))', replacement = 'muscle pain')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(myalgia(s)?)|(aching muscles)|(sore ((body)|(muscle)))|(soreness)', replacement = 'muscle pain')) %>%
+
+  # Fix problems associated with 'nasal discharge'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '((runny nose)|(sneeze)|(sneezing)|(^discharge)|(nasal congestion))', replacement = 'nasal discharge')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'rhinorrh((oea)|(ea))', replacement = 'nasal discharge')) %>%
+
+  # Fix problems associated with 'flu'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '((flu-like symptoms)|(feeling ill))', replacement = 'flu')) %>%
+
+  # Fix problems associated with 'cough'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(mild )?cough(ing)?', replacement = 'cough')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(dry )?cough( symptoms)?', replacement = 'cough')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'couh', replacement = 'cough')) %>%
+
+  # Fix problems associated with 'fatigue'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '((systemic )?weakness)', replacement = 'fatigue')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(weak)', replacement = 'fatigue')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(transient fatigue)', replacement = 'fatigue')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(lack of energy)', replacement = 'fatigue')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '(full body slump)', replacement = 'fatigue')) %>%
+
+  # Fix problems associated with 'pneumonia'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '((pulmonary inflammation)|(severe pneumonia)|(pneumonitis))', replacement = 'pneumonia')) %>%
+
+  # Fix problems associated with 'reflux'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'esophageal (reflux)', replacement = '\\1')) %>%
+
+  # Fix problems associated with 'sputum'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '((expectoration)|(phlegm))', replacement = 'sputum')) %>%
+
+  # Fix problems associated with 'loss of appetite'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'anorexia', replacement = 'loss of appetite')) %>%
+
+  # Fix problems associated with 'nausea'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'dizziness', replacement = 'nausea')) %>%
+
+  # Fix problems associated with 'leg pain'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'sore limbs', replacement = 'leg pain')) %>%
+
+  # Fix problems associated with 'conjunctivitis'
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'eye irritation', replacement = 'conjunctivitis')) %>%
+
+  # Fix problems associated with ARIs (acute respiratory infection)
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'acute respiratory viral infection', replacement = 'acute respiratory infection'))
 
 
 
@@ -348,6 +600,7 @@ str(df3)
 
 print('The structure of df4 is: ')
 str(df4)
+
 
 ################################# - RENAME COLUMNS - #################################
 
@@ -394,6 +647,9 @@ ts_confirmed_world_df <-
   # Convert 'Cote d'Ivoire' to 'Ivory Coast', for consistency with the other datasets
   mutate(country = str_replace_all(country, pattern = 'Cote d\'Ivoire', replacement = 'Ivory Coast')) %>%
 
+  # Convert 'Burma' to 'Myanmar'
+  mutate(country = str_replace_all(country, pattern = 'Burma', replacement = 'Myanmar')) %>%
+
   # Convert 'Korea, South' to 'South Korea', for consistency with the other datasets
   mutate(country = str_replace_all(country, pattern = '(Korea), (South)', replacement = '\\2 \\1')) %>%
 
@@ -439,6 +695,38 @@ ts_confirmed_world_df <-
   mutate(date_observation = mdy(date_observation))
 
 
+############################# - AGGREGATE CASES for Canada - #############################
+
+# Canada is the only country in the dataset that has a problem,
+# its values for 'confirmed' and 'deaths' are aggregated within provinces,
+# however the values for 'recovered' are aggregated across the country
+# Therefore, we will standardize the case aggregation to only be across the whole country
+
+canada_confirmed_subset <-
+  ts_confirmed_world_df %>%
+
+  # Remove all provinces from Canada
+  filter(country == 'Canada') %>%
+  mutate(province = 'Canada') %>%
+
+  # Summarize the total number of cases over the entire country
+  group_by(date_observation) %>%
+  mutate(cases = sum(cases)) %>%
+
+  # Only keep 1 aggregated observation for every observation day
+  distinct(date_observation, .keep_all = TRUE)
+
+# Join the new wrangled data for Canada with the old dataframe,
+# from which we have removed the observations related to Canada,
+# after which we arrange ascendingly by country, then by province
+
+ts_confirmed_world_df <-
+  ts_confirmed_world_df %>%
+  filter(country != 'Canada') %>%
+  full_join(canada_confirmed_subset) %>%
+  arrange(country, province)
+
+
 
 
 
@@ -453,6 +741,7 @@ ts_confirmed_world_df <-
 
 print('The structure of df5 is: ')
 str(df5)
+
 
 ################################ - REMOVING UNNECESSARY COLUMNS - #############################
 
@@ -516,6 +805,7 @@ ts_confirmed_US_df <-
 print('The structure of df6 is: ')
 str(df6)
 
+
 ################################# - RENAME COLUMNS - #################################
 
 ts_deaths_world_df <-
@@ -560,6 +850,9 @@ ts_deaths_world_df <-
 
   # Convert 'Cote d'Ivoire' to 'Ivory Coast', for consistency with the other datasets
   mutate(country = str_replace_all(country, pattern = 'Cote d\'Ivoire', replacement = 'Ivory Coast')) %>%
+
+  # Convert 'Burma' to 'Myanmar'
+  mutate(country = str_replace_all(country, pattern = 'Burma', replacement = 'Myanmar')) %>%
 
   # Convert 'Korea, South' to 'South Korea', for consistency with the other datasets
   mutate(country = str_replace_all(country, pattern = '(Korea), (South)', replacement = '\\2 \\1')) %>%
@@ -607,6 +900,38 @@ ts_deaths_world_df <-
   mutate(date_observation = mdy(date_observation))
 
 
+############################# - AGGREGATE CASES for Canada - #############################
+
+# Canada is the only country in the dataset that has a problem,
+# its values for 'confirmed' and 'deaths' are aggregated within provinces,
+# however the values for 'recovered' are aggregated across the country
+# Therefore, we will standardize the case aggregation to only be across the whole country
+
+canada_confirmed_subset <-
+  ts_deaths_world_df %>%
+
+  # Remove all provinces from Canada
+  filter(country == 'Canada') %>%
+  mutate(province = 'Canada') %>%
+
+  # Summarize the total number of cases over the entire country
+  group_by(date_observation) %>%
+  mutate(cases = sum(cases)) %>%
+
+  # Only keep 1 aggregated observation for every observation day
+  distinct(date_observation, .keep_all = TRUE)
+
+# Join the new wrangled data for Canada with the old dataframe,
+# from which we have removed the observations related to Canada,
+# after which we arrange ascendingly by country, then by province
+
+ts_deaths_world_df <-
+  ts_deaths_world_df %>%
+  filter(country != 'Canada') %>%
+  full_join(canada_confirmed_subset) %>%
+  arrange(country, province)
+
+
 
 
 
@@ -616,11 +941,12 @@ ts_deaths_world_df <-
 
 
 ##############################################################################################################
-################### - Wrangle data from 'df7': time_series_covid_19_deaths_US.csv - #######################
+##################### - Wrangle data from 'df7': time_series_covid_19_deaths_US.csv - ########################
 ##############################################################################################################
 
 print('The structure of df7 is: ')
 str(df7)
+
 
 ################################ - REMOVING UNNECESSARY COLUMNS - #############################
 
@@ -687,6 +1013,7 @@ ts_deaths_US_df <-
 print('The structure of df8 is: ')
 str(df8)
 
+
 ################################# - RENAME COLUMNS - #################################
 
 ts_recovered_world_df <-
@@ -731,6 +1058,9 @@ ts_recovered_world_df <-
 
   # Convert 'Cote d'Ivoire' to 'Ivory Coast', for consistency with the other datasets
   mutate(country = str_replace_all(country, pattern = 'Cote d\'Ivoire', replacement = 'Ivory Coast')) %>%
+
+  # Convert 'Burma' to 'Myanmar'
+  mutate(country = str_replace_all(country, pattern = 'Burma', replacement = 'Myanmar')) %>%
 
   # Convert 'Korea, South' to 'South Korea', for consistency with the other datasets
   mutate(country = str_replace_all(country, pattern = '(Korea), (South)', replacement = '\\2 \\1')) %>%
@@ -778,41 +1108,84 @@ ts_recovered_world_df <-
   mutate(date_observation = mdy(date_observation))
 
 
+############################# - AGGREGATE CASES for Canada - #############################
 
-# TODO: MORE WRANGLING
+# Canada is the only country in the dataset that has a problem,
+# its values for 'confirmed' and 'deaths' are aggregated within provinces,
+# however the values for 'recovered' are aggregated across the country
+# Therefore, we will standardize the case aggregation to only be across the whole country
 
-# patient_data_first_df %>% select(province) %>% anti_join(y = daily_covid_trends_df, by = c('province' = 'province')) %>% group_by(province) %>% count() %>% print(n = Inf)
-# daily_covid_trends_df %>% select(province) %>% anti_join(y = patient_data_first_df, by = c('province' = 'province')) %>% group_by(province) %>% count() %>% print(n = Inf)
-#
-# patient_data_first_df %>% select(province) %>% group_by(province) %>% count() %>% print(n = Inf)
-# daily_covid_trends_df %>% select(province) %>% group_by(province) %>% count() %>% print(n = Inf)
-#
-# patient_data_first_df %>% select(country) %>% group_by(country) %>% count() %>% print(n = Inf)
-# daily_covid_trends_df %>% select(country) %>% group_by(country) %>% count() %>% print(n = Inf)
+canada_confirmed_subset <-
+  ts_recovered_world_df %>%
 
-# patient_data_first_df %>%
-#   select(symptoms_set) %>%
-#   separate_rows(symptoms_set, sep = ', ') %>%
-#   group_by(symptoms_set) %>%
-#   count() %>%
-#   print(n = Inf)
+  # Remove all provinces from Canada
+  filter(country == 'Canada') %>%
+  mutate(province = 'Canada') %>%
+  mutate(lat = 53.9) %>%
+  mutate(long = -117.) %>%
 
-# na_if(df3, 'N/A')
+  # Summarize the total number of cases over the entire country
+  group_by(date_observation) %>%
+  mutate(cases = sum(cases)) %>%
 
-# patient_data_first_df %>%
-#   filter_all(any_vars(str_detect(., 'N/A')))
+  # Only keep 1 aggregated observation for every observation day
+  distinct(date_observation, .keep_all = TRUE)
 
+# Join the new wrangled data for Canada with the old dataframe,
+# from which we have removed the observations related to Canada,
+# after which we arrange ascendingly by country, then by province
 
-ts_confirmed_world_df %>% select(country, province) %>% anti_join(y = daily_covid_trends_df) %>% group_by(country, province) %>% count() %>% print(n = Inf)
-
-ts_confirmed_world_df %>% select(province) %>% group_by(province) %>% count() %>% print(n = Inf)
-ts_confirmed_world_df %>% select(province) %>% anti_join(y = daily_covid_trends_df, by = c('province' = 'province')) %>% group_by(province) %>% count() %>% print(n = Inf)
-
-ts_confirmed_world_df %>% select(country) %>% group_by(country) %>% count() %>% print(n = Inf)
+ts_recovered_world_df <-
+  ts_recovered_world_df %>%
+  filter(country != 'Canada') %>%
+  full_join(canada_confirmed_subset) %>%
+  arrange(country, province)
 
 
 
+
+
+
+
+
+
+
+##################################################################################################
+################## - Wrangle data from 'df9': wpp2019_total_population.csv - #####################
+##################################################################################################
+
+population_by_country_df <-
+  df9 %>%
+  filter(country %in% daily_covid_trends_df$country) %>%
+  mutate(total_population = as.double(total_population)) %>%
+  mutate(population_density = as.double(population_density))
+
+
+
+
+
+
+
+
+
+
+#################################################################################
+############################## - Write data - ###################################
+#################################################################################
+
+<<<<<<< HEAD
 # Write data
 # ------------------------------------------------------------------------------
 #write_tsv(x = patient_data_first_df,
 #           path = "data/01_my_data_clean.tsv")
+=======
+write_csv(x = daily_covid_trends_df,    path = ".//data//_clean//daily_covid_trends_df_clean.csv")
+write_csv(x = patient_data_first_df,    path = ".//data//_clean//patient_data_first_df_clean.csv")
+write_csv(x = patient_data_second_df,   path = ".//data//_clean//patient_data_second_df_clean.csv")
+write_csv(x = ts_confirmed_world_df,    path = ".//data//_clean//ts_confirmed_world_df_clean.csv")
+write_csv(x = ts_confirmed_US_df,       path = ".//data//_clean//ts_confirmed_US_df_clean.csv")
+write_csv(x = ts_deaths_world_df,       path = ".//data//_clean//ts_deaths_world_df_clean.csv")
+write_csv(x = ts_deaths_US_df,          path = ".//data//_clean//ts_deaths_US_df_clean.csv")
+write_csv(x = ts_recovered_world_df,    path = ".//data//_clean//ts_recovered_world_df_clean.csv")
+write_csv(x = population_by_country_df, path = ".//data//_clean//population_by_country_df_clean.csv")
+>>>>>>> f7da7bbbdc9f186995b1b8108be2237484e4a3f6
