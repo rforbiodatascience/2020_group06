@@ -584,7 +584,11 @@ patient_data_second_df <-
   mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'eye irritation', replacement = 'conjunctivitis')) %>%
 
   # Fix problems associated with ARIs (acute respiratory infection)
-  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'acute respiratory viral infection', replacement = 'acute respiratory infection'))
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = 'acute respiratory viral infection', replacement = 'acute respiratory infection')) %>%
+
+  # Fix a problem related to a stray fever value being present
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '37\\.1.*,', replacement = ''))
+
 
 
 
@@ -1121,8 +1125,8 @@ canada_confirmed_subset <-
   # Remove all provinces from Canada
   filter(country == 'Canada') %>%
   mutate(province = 'Canada') %>%
-  mutate(lat = 53.9) %>%
-  mutate(long = -117.) %>%
+  mutate(lat = 53.9333) %>%
+  mutate(long = -116.5765) %>%
 
   # Summarize the total number of cases over the entire country
   group_by(date_observation) %>%
