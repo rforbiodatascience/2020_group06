@@ -65,9 +65,9 @@ df %>%
 ### Barplot of the symptoms (only when counts > 10 for visualization purposes)
 
 df %>%
-  select(is_dead,chills:thirst) %>%
+  select(chills:thirst) %>%
   summarise_if(is.numeric,sum,na.rm=TRUE) %>%
-  gather(dead, symptoms,counts,chills:thirst) %>%
+  gather(symptoms,counts,chills:thirst) %>%
   filter(counts > 10) %>%
   ggplot(aes(reorder(symptoms,counts),counts,fill = symptoms)) +
   geom_bar(stat="identity") +
