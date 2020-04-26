@@ -1177,12 +1177,12 @@ population_by_country_df <-
 ############################## - Write data - ###################################
 #################################################################################
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 # Write data
 # ------------------------------------------------------------------------------
 #write_tsv(x = patient_data_first_df,
 #           path = "data/01_my_data_clean.tsv")
-=======
+#=======
 write_csv(x = daily_covid_trends_df,    path = ".//data//_clean//daily_covid_trends_df_clean.csv")
 write_csv(x = patient_data_first_df,    path = ".//data//_clean//patient_data_first_df_clean.csv")
 write_csv(x = patient_data_second_df,   path = ".//data//_clean//patient_data_second_df_clean.csv")
@@ -1192,4 +1192,4 @@ write_csv(x = ts_deaths_world_df,       path = ".//data//_clean//ts_deaths_world
 write_csv(x = ts_deaths_US_df,          path = ".//data//_clean//ts_deaths_US_df_clean.csv")
 write_csv(x = ts_recovered_world_df,    path = ".//data//_clean//ts_recovered_world_df_clean.csv")
 write_csv(x = population_by_country_df, path = ".//data//_clean//population_by_country_df_clean.csv")
->>>>>>> f7da7bbbdc9f186995b1b8108be2237484e4a3f6
+#>>>>>>> f7da7bbbdc9f186995b1b8108be2237484e4a3f6

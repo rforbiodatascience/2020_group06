@@ -53,8 +53,8 @@ population_by_country_df <- read_csv('.//data//_clean//population_by_country_df_
 
 patient_data_first_df <-
   patient_data_first_df %>%
-  mutate(age_group = case_when(between(age, 0, 4) ~ '0-4',
-                               between(age, 5, 9) ~ '5-9',
+  mutate(age_group = case_when(between(age, 0, 4) ~ '00-04',
+                               between(age, 5, 9) ~ '05-09',
                                between(age, 10, 14) ~ '10-14',
                                between(age, 15, 19) ~ '15-19',
                                between(age, 20, 29) ~ '20-29',
@@ -67,8 +67,8 @@ patient_data_first_df <-
 
 patient_data_second_df <-
   patient_data_second_df %>%
-  mutate(age_group = case_when((between(age_dbl, 0, 4) | age == '0-4') ~ '0-4',
-                               (between(age_dbl, 5, 9) | age == '5-9') ~ '5-9',
+  mutate(age_group = case_when((between(age_dbl, 0, 4) | age == '0-4') ~ '00-04',
+                               (between(age_dbl, 5, 9) | age == '5-9') ~ '05-09',
                                (between(age_dbl, 10, 14) | age == '10-14') ~ '10-14',
                                (between(age_dbl, 15, 19) | age == '15-19') ~ '15-19',
                                (between(age_dbl, 20, 29) | age == '20-29') ~ '20-29',
@@ -155,7 +155,7 @@ final_patient_data_df <-
   final_patient_data_df %>%
   mutate(gender = factor(gender, levels = c('male', 'female'))) %>%
   mutate(age_group = factor(age_group,
-                            levels = c("0-4", "5-9", "10-14", "15-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")))
+                            levels = c("00-04", "05-09", "10-14", "15-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")))
 
 
 
