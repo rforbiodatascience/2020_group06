@@ -224,7 +224,14 @@ final_ts_world_df <-
   mutate(active_cases = as.double(total_confirmed - closed_cases)) %>%
 
   # Reorder the variables to a useful form
-  select(province:total_recovered, new_confirmed:new_recovered, active_cases, closed_cases, total_confirmed_per_mil_pop, total_deaths_per_mil_pop)
+  select(province:total_recovered, new_confirmed:new_recovered,
+         active_cases, closed_cases, total_confirmed_per_mil_pop,
+         total_deaths_per_mil_pop) %>%
+
+  # Summarising
+  select(country,date_observation,total_confirmed:total_deaths_per_mil_pop) %>%
+  group_by(date_observation,country) %>%
+  summarise_if(is.numeric,funs(sum))
 
 
 

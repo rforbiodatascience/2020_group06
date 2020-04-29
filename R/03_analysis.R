@@ -6,7 +6,8 @@ rm(list = ls())
 # Load libraries
 # ------------------------------------------------------------------------------
 library("tidyverse")
-
+library("leaflet")
+library("leaflet.extras")
 
 # Define functions
 # ------------------------------------------------------------------------------
@@ -15,16 +16,17 @@ source(file = "R/99_func.R")
 
 # Load data
 # ------------------------------------------------------------------------------
-df <- read_csv(file = "data/_augmented/final_patient_data_df_augm.csv")
+df_patient <- read_csv(file = "data/_augmented/final_patient_data_df_augm.csv")
+df_ts <- read_csv(file = "data/_augmented/final_ts_world_df_augm.csv")
 
 
-# Basic descriptive and visualization
+# Basic descriptive and visualization: Patient data
 # ------------------------------------------------------------------------------
 
 
 ### Distribution of age group by gender
 
-df %>%
+df_patient %>%
   group_by(age_group,gender) %>%
   tally() %>%
   collect() %>%
@@ -35,23 +37,35 @@ df %>%
   labs(title = "Distribution of age group by gender", x = "Age group", y = "Count")
 
 
-### Boxplot of Time from onset to admission between "dead" and "not dead" patients
+### Smoothing of time 2 admin as a function of age, grouped by gender and dead
 
-df %>%
+df_patient %>%
   mutate(time2admin = as.integer(date_admission_hospital - date_onset)) %>%
-  drop_na(time2admin) %>%
-  group_by(time2admin,is_dead) %>%
-  tally() %>%
-  collect() %>%
+  select(gender,age,time2admin,is_dead,contact_with_Wuhan) %>%
+  drop_na(gender,age,time2admin,is_dead, contact_with_Wuhan) %>%
   ggplot() +
-  geom_boxplot(aes(as_factor(is_dead),time2admin, fill = as_factor(is_dead))) +
-  theme(legend.position="none") +
-  labs(title = "Time from onset to admission", x = "Alive: 0, Dead: 1", y = "Days")
+  geom_point(aes(age,time2admin, color=gender)) +
+  geom_smooth(aes(age,time2admin)) +
+  facet_grid(contact_with_Wuhan~.,
+             labeller = label_both, scales = "free")
+
+
+### Boxplot of age range, by is_dead, contact with wuhan and had a fever
+
+df_patient %>%
+  select(gender,age,fever,is_dead,contact_with_Wuhan) %>%
+  drop_na(gender,age,fever,is_dead, contact_with_Wuhan) %>%
+  ggplot() +
+  geom_boxplot(aes(as.factor(fever),age, fill=gender)) +
+  facet_grid(contact_with_Wuhan~is_dead,
+             labeller = label_both, scales = "free") +
+  xlab("fever")
+
 
 
 ### Barplot in polar coordinates of incidents pr. country above 100
 
-df %>%
+df_patient %>%
   group_by(country) %>%
   tally() %>%
   filter(country != "China",n > 100) %>%
@@ -59,12 +73,13 @@ df %>%
   ggplot() +
   geom_bar(aes(country, n,fill = country), stat = "identity") +
   coord_polar(start = 300) +
-  labs(title = "Counts of incidents above 100", x = "", y = "Count")
+  labs(title = "Counts of incidents above 100", x = "", y = "Count",
+       subtitle = "Jan-Feb 2020")
 
 
 ### Barplot of the symptoms (only when counts > 10 for visualization purposes)
 
-df %>%
+df_patient %>%
   select(chills:thirst) %>%
   summarise_if(is.numeric,sum,na.rm=TRUE) %>%
   gather(symptoms,counts,chills:thirst) %>%
@@ -74,6 +89,33 @@ df %>%
   coord_flip() +
   theme(legend.position = "none") + ylim(0,650) +
   labs(title = "Incidents (n > 10) of symptoms",y = "Count", x = "")
+
+
+### Heatmap of cases (without china)
+
+df_patient %>%
+  #filter(country != "China") %>%
+  drop_na(long,lat) %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("CartoDB.DarkMatter") %>%
+  addHeatmap(lng = ~long, lat = ~lat,
+             blur = 9, max = 0.05, radius = 6) %>%
+  addMarkers(clusterOptions =
+               markerClusterOptions())
+
+
+
+# Basic descriptive and visualization: Time Series
+# ------------------------------------------------------------------------------
+
+
+df_ts %>%
+  filter(country == "Denmark") %>%
+  ggplot() +
+  geom_line(aes(date_observation,total_confirmed_per_mil_pop))
+
+
 
 
 
