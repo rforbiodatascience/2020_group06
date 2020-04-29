@@ -8,6 +8,10 @@ rm(list = ls())
 library("tidyverse")
 library("leaflet")
 library("leaflet.extras")
+library("ggpubr")
+library("broom")
+library("purrr")
+
 
 # Define functions
 # ------------------------------------------------------------------------------
@@ -106,60 +110,110 @@ df_patient %>%
 
 
 
-# Basic descriptive and visualization: Time Series
+# Visualization: Time Series
 # ------------------------------------------------------------------------------
 
 
-df_ts %>%
-  filter(country == "Denmark") %>%
+########## Comparison of Denmark and Sweden ##########
+
+
+##### Comparing total confirmed
+p1<- df_ts %>%
+  filter(country %in% c("Denmark","Sweden")) %>%
   ggplot() +
-  geom_line(aes(date_observation,total_confirmed_per_mil_pop))
+  geom_line(aes(date_observation,total_confirmed,color = country)) +
+  theme(legend.position = "none")
+
+
+##### Comparing total confirmed per mill. population
+p2<- df_ts %>%
+  filter(country %in% c("Denmark","Sweden")) %>%
+  ggplot() +
+  geom_line(aes(date_observation,total_confirmed_per_mil_pop ,color = country))
+
+
+##### Comparing total deaths
+p3<- df_ts %>%
+  filter(country %in% c("Denmark","Sweden")) %>%
+  ggplot() +
+  geom_line(aes(date_observation,total_deaths,color = country)) +
+  theme(legend.position = "none")
+
+
+##### Comparing total deaths per mill. population
+p4<- df_ts %>%
+  filter(country %in% c("Denmark","Sweden")) %>%
+  ggplot() +
+  geom_line(aes(date_observation,total_deaths_per_mil_pop,color = country))
+
+
+##### Plotting both of the total death
+ggarrange(p3, p4, ncol=1, nrow=2, align = "v")
+
+
+##### Plotting all 4 plots together; confirmed, death + per mill. pop.
+ggarrange(p1, p2, p3, p4, ncol=2, nrow=2, align = "h")
 
 
 
+####################################################################################
+########## Comparison of Denmark, Sweden, Romania, Turkey and Philippines ##########
 
 
-# Wrangle data
+### Comparing Denmark, Sweden, Romania, Turkey and Philippines per mill. population
+df_ts %>%
+  filter(country %in% c("Denmark","Sweden", "Romania","Turkey","Philippines")) %>%
+  filter(date_observation >= "2020-03-01") %>% # Starting here due to observation
+  ggplot() +
+  geom_line(aes(date_observation, total_confirmed_per_mil_pop, color = country))
+
+
+
+# Model data: Time Series
 # ------------------------------------------------------------------------------
 
-#
-df<- df %>%
-  mutate(time2admin = date_admission_hospital - date_onset)
+#Selecting few countries and nesting per country and time series type
+df_ts_selected<- df_ts %>%
+  filter(country %in% c("Denmark","Sweden", "Romania","Turkey","Philippines")) %>%
+  filter(date_observation >= "2020-03-01") %>%
+  gather(ts, count, total_confirmed:total_deaths_per_mil_pop) %>%
+  group_by(country,ts) %>%
+  nest()
 
 
+# Modelling with linear model
+df_ts_models<- df_ts_selected %>%
+  mutate(ts_country = str_c(ts, country, sep="_"),
+         mdls = map(data, mdl),
+         glance = map(mdls,glance),
+         tidy = map(mdls,tidy),
+         conf = map(mdls,confint_tidy))
 
 
-bl62_pca <- my_data_clean_aug %>%
-  select(-X1) %>%
-  prcomp(center = TRUE, scale = TRUE)
-
-bl62_pca %>%
-  broom::tidy("pcs") %>%
-  ggplot(aes(x = PC, y = percent)) +
-  geom_col() +
-  theme_bw()
-
-bl62_pca_aug <- bl62_pca %>%
-  broom::augment(my_data_clean_aug)
-
-bl62_pca_aug <- bl62_pca_aug %>%
-  mutate(chem_class = get_chem_class(X1))
-
-bl62_pca_aug %>% select(X1, chem_class)
+#########################################################################
+########## Estimate pr. day of confirmed and death per mil pop ##########
 
 
-# Model data
-# ------------------------------------------------------------------------------
-my_data_clean_aug # %>% ...
+##### Showing model estimate per confirmed per mil pop
+df_ts_models %>%
+  unnest(tidy,conf) %>%
+  filter(ts == "total_confirmed_per_mil_pop",term == "date_observation") %>%
+  select(ts_country,estimate,conf.low,conf.high) %>%
+  ggplot(aes(estimate,ts_country,color = ts_country),show.legend = FALSE) +
+  geom_point() +
+  geom_errorbarh(aes(xmin= conf.low, xmax = conf.high))
 
 
-# Visualise data
-# ------------------------------------------------------------------------------
+##### Showing model estimate per confirmed per mil pop
+df_ts_models %>%
+  unnest(tidy,conf) %>%
+  filter(ts == "total_deaths_per_mil_pop",term == "date_observation") %>%
+  select(ts_country,estimate,conf.low,conf.high) %>%
+  ggplot(aes(estimate,ts_country,color = ts_country),show.legend = FALSE) +
+  geom_point() +
+  geom_errorbarh(aes(xmin= conf.low, xmax = conf.high))
 
-bl62_pca_aug_plt <- bl62_pca_aug %>%
-  ggplot(aes(x = .fittedPC1, y = .fittedPC2, label = X1, colour = chem_class)) +
-  geom_text() +
-  theme(legend.position = "bottom")
+
 
 
 # Write data
