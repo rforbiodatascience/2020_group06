@@ -225,7 +225,7 @@ final_ts_world_df <-
 
   # Reorder the variables to a useful form
   select(province:total_recovered, new_confirmed:new_recovered,
-         active_cases, closed_cases, total_confirmed_per_mil_pop,
+         active_cases, closed_cases, total_population, total_confirmed_per_mil_pop,
          total_deaths_per_mil_pop) %>%
 
   # Summarising
