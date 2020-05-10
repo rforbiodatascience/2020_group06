@@ -40,13 +40,7 @@ ggplot(data=df_ts %>%
 
 # SIR modelling
 # ------------------------------------------------------------------------------
-SIR <- function(date,data,pars) {
-  dS = -beta*I*S
-  dI = beta*I*S - gamma*I
-  dR = gamma*I
-  dD = mu*I
-  return(c(dS,dI,dR,dD))
-}
+
 
 df_SIR = df_ts %>%
   rename(N = total_population) %>%

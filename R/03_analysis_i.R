@@ -39,32 +39,39 @@ df_patient %>%
   arrange(desc(age_group)) %>%
   ggplot() +
   geom_col(aes(x = age_group, y = n, fill = gender)) +
-  labs(title = "Distribution of age group by gender", x = "Age group", y = "Count")
+  labs(title = "Distribution of age group by gender",
+       subtitle= "COVID-19 affected", x = "Age group", y = "Count")
 
 
 ### Smoothing of time 2 admin as a function of age, grouped by gender and dead
 
 df_patient %>%
-  mutate(time2admin = as.integer(date_admission_hospital - date_onset)) %>%
-  select(gender,age,time2admin,is_dead,contact_with_Wuhan) %>%
-  drop_na(gender,age,time2admin,is_dead, contact_with_Wuhan) %>%
+  mutate(time2admis = as.integer(date_admission_hospital - date_onset)) %>%
+  select(gender,age,time2admis,is_dead,contact_with_Wuhan) %>%
+  drop_na(gender,age,time2admis,is_dead, contact_with_Wuhan) %>%
   ggplot() +
-  geom_point(aes(age,time2admin, color=gender)) +
-  geom_smooth(aes(age,time2admin)) +
+  geom_point(aes(age,time2admis, color=gender)) +
+  geom_smooth(aes(age,time2admis)) +
   facet_grid(contact_with_Wuhan~.,
-             labeller = label_both, scales = "free")
+             labeller = label_both, scales = "free") +
+  ylim(0,30) +
+  labs(title = "From onset to hospital admission",
+       subtitle= "COVID-19 affected", x = "Age",
+       y = "Day(s)")
+
 
 
 ### Boxplot of age range, by is_dead, contact with wuhan and had a fever
 
 df_patient %>%
-  select(gender,age,fever,is_dead,contact_with_Wuhan) %>%
-  drop_na(gender,age,fever,is_dead, contact_with_Wuhan) %>%
+  select(gender,age,dyspnea,is_dead,contact_with_Wuhan) %>%
+  drop_na(gender,age,dyspnea,is_dead, contact_with_Wuhan) %>%
   ggplot() +
-  geom_boxplot(aes(as.factor(fever),age, fill=gender)) +
+  geom_boxplot(aes(as.factor(dyspnea),age, fill=gender)) +
   facet_grid(contact_with_Wuhan~is_dead,
              labeller = label_both, scales = "free") +
-  xlab("fever")
+  labs(title = "Age distribution by symptoms, death and contact with wuhan",
+       subtitle= "COVID-19 affected", x = "Dyspnea", y = "Age")
 
 
 
@@ -78,8 +85,8 @@ df_patient %>%
   ggplot() +
   geom_bar(aes(country, n,fill = country), stat = "identity") +
   coord_polar(start = 300) +
-  labs(title = "Counts of incidents above 100", x = "", y = "Count",
-       subtitle = "Jan-Feb 2020")
+  labs(title = "Numbers of cases (above 100) between Jan-feb 2020",
+       subtitle= "COVID-19 affected", x = "", y = "Count")
 
 
 ### Barplot of the symptoms (only when counts > 10 for visualization purposes)
@@ -93,7 +100,9 @@ df_patient %>%
   geom_bar(stat="identity") +
   coord_flip() +
   theme(legend.position = "none") + ylim(0,650) +
-  labs(title = "Incidents (n > 10) of symptoms",y = "Count", x = "")
+  labs(title = "Prevalence of symptoms",
+       subtitle= "Observed in more than 10 cases",
+       x = "Symptoms", y = "Count")
 
 
 ### Heatmap of cases (without china)
@@ -108,6 +117,11 @@ df_patient %>%
              blur = 9, max = 0.05, radius = 6) %>%
   addMarkers(clusterOptions =
                markerClusterOptions())
+
+# labels not possible!
+# labs(title = "Confirmed cases",
+#     subtitle= "COVID-19 affected",
+#     x = "", y = "")
 
 
 
@@ -153,7 +167,8 @@ ggarrange(p3, p4, ncol=1, nrow=2, align = "v")
 
 
 ##### Plotting all 4 plots together; confirmed, death + per mill. pop.
-ggarrange(p1, p2, p3, p4, ncol=2, nrow=2, align = "h")
+ggarrange(p1, p2, p3, p4, ncol=2, nrow=2, align = "h", common.legend = TRUE
+)
 
 
 
@@ -170,14 +185,20 @@ df_ts %>%
   filter(country %in% c("Denmark","Sweden", "Romania","Turkey","Philippines")) %>%
   filter(date_observation >= "2020-03-11") %>% # Starting here due to observation
   ggplot() +
-  geom_line(aes(date_observation, total_confirmed_per_mil_pop, color = country))
+  geom_line(aes(date_observation, total_confirmed_per_mil_pop, color = country)) +
+  labs(title = "Confirmed cases per million population",
+       subtitle= "COVID-19 affected",
+       x = "Date", y = "Count per million population")
 
 ### Total deaths per mil pop
 df_ts %>%
   filter(country %in% c("Denmark","Sweden", "Romania","Turkey","Philippines")) %>%
   filter(date_observation >= "2020-03-11") %>% # Starting here due to observation
   ggplot() +
-  geom_line(aes(date_observation, total_deaths_per_mil_pop, color = country))
+  geom_line(aes(date_observation, total_deaths_per_mil_pop, color = country)) +
+  labs(title = "Death(s) per million population",
+       subtitle= "COVID-19 affected",
+       x = "Date", y = "Count per million population")
 
 
 # Model data: Time Series
@@ -212,7 +233,10 @@ df_ts_models %>%
   select(ts_country,estimate,conf.low,conf.high) %>%
   ggplot(aes(estimate,ts_country,color = ts_country),show.legend = FALSE) +
   geom_point() +
-  geom_errorbarh(aes(xmin= conf.low, xmax = conf.high))
+  geom_errorbarh(aes(xmin= conf.low, xmax = conf.high)) +
+  labs(title = "Model evaluation of confirmed cases",
+       subtitle= "COVID-19 affected",
+       x = "Estimated coefficient", y = "Country")
 
 
 ##### Showing model estimate (coefficient) deaths per mil pop
@@ -222,7 +246,10 @@ df_ts_models %>%
   select(ts_country,estimate,conf.low,conf.high) %>%
   ggplot(aes(estimate,ts_country,color = ts_country),show.legend = FALSE) +
   geom_point() +
-  geom_errorbarh(aes(xmin= conf.low, xmax = conf.high))
+  geom_errorbarh(aes(xmin= conf.low, xmax = conf.high)) +
+  labs(title = "Model evaluation of death cases",
+       subtitle= "COVID-19 affected",
+       x = "Estimated coefficient", y = "Country")
 
 
 ##### Evaluation of the models based on the residuals per country
@@ -233,7 +260,10 @@ df_ts_models %>%
   ggplot() +
   geom_boxplot(aes(country,.resid, fill = country)) +
   facet_grid(.~ts) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Model evaluation (residuals)",
+       subtitle= "COVID-19",
+       x = "Country", y = "Residuals")
 
 
 # Model data: Patient data
@@ -286,7 +316,6 @@ df_patient_glm<- df_patient %>%
   mutate(age = as.integer(age))
 
 
-
 # making model prediction for being dead
 df_patient_glm %>%
   glm(is_dead ~ ., ., family = binomial()) %>%
@@ -297,6 +326,7 @@ df_patient_glm %>%
 df_patient_glm_is_dead<- df_patient_glm %>%
   select(is_dead, gender, age, contact_with_Wuhan, fever)
 
+
 # showing the summary (estimate + std.error)
 df_patient_glm_is_dead %>%
   glm(is_dead ~ ., ., family = binomial()) %>%
@@ -306,30 +336,25 @@ df_patient_glm_is_dead %>%
   ggplot(aes(estimate, term, xmin = low, xmax = high, height = 0)) +
   geom_point() +
   geom_vline(xintercept = 0) +
-  geom_errorbarh()
-
-
-# Model!!!
-
-# is_dead = intercept + gender + age + contact_with_wuhan + fever
-
-# is_dead = -9.86 + 0.956*gender + 0.0994*age + 1.64*contact_with_wuhan - 1.64*fever
-
-
-fit<- df_patient_glm_is_dead %>%
-  glm(is_dead ~ ., ., family = binomial())
-
-stanley<- list(gender = as_factor("male"), age = 33,
-              contact_with_Wuhan = as_factor(0), fever = as_factor(0))
-
-predict(fit, stanley, type = "response")
-
+  geom_errorbarh() +
+  labs(title = "Model evaluation of logsitic regression",
+       subtitle= "COVID-19 affected",
+       x = "Estimated coefficient", y = "Parameters")
 
 
 ##### Using augment
 df_patient_glm_is_dead %>%
-  glm(is_dead ~ ., ., family = binomial()) %>%
-  augment()
+  glm(is_dead ~ ., ., family = binomial) %>%
+  augment(type.predict = "response") %>%
+  mutate(logit = log(.fitted/(1-.fitted)),
+         pred_class = ifelse(.fitted > 0.5, "is_dead","not_dead")) %>%
+  ggplot(aes(age,.fitted)) +
+  geom_point(alpha = .15) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+  ggtitle("Logistic regression model fit") +
+  xlab("Age") +
+  ylab("Probability")
+
 
 
 ### Plotting hat vs. resid
@@ -350,7 +375,10 @@ df_patient_glm_is_dead %>%
   geom_vline(xintercept = 0, colour = NA) +
   geom_abline(slope = seq(0, 3, by = 0.5), colour = "white") +
   geom_smooth(se = FALSE) +
-  geom_point()
+  geom_point() +
+  labs(title = "Model evaluation logsitic regression",
+       subtitle= "COVID-19 affected",
+       x = "Estimated values", y = "Coock's distance")
 
 
 
