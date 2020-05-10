@@ -375,7 +375,10 @@ df_patient_glm_is_dead %>%
   geom_vline(xintercept = 0, colour = NA) +
   geom_abline(slope = seq(0, 3, by = 0.5), colour = "white") +
   geom_smooth(se = FALSE) +
-  geom_point()
+  geom_point() +
+  labs(title = "Model evaluation logsitic regression",
+       subtitle= "COVID-19 affected",
+       x = "Estimated values", y = "Coock's distance")
 
 
 
