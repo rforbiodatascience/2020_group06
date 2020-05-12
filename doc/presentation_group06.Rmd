@@ -28,7 +28,7 @@ Some questions that one can immediately ask are:
 
 From expert analysis and clinical information, we know that COVID19 spreads through *__respiratory droplets__*, such as when sneezing, coughing or speaking. 
 
-Organizations and researchers across the whole world have been collecting data for monitoring and learning about this pandemic. Notably, the Johns Hopkins University created a publicly available data repository to consolidate research efforts. 
+Organizations and researchers across the whole world have been collecting data for monitoring and learning about this pandemic. Notably, the **Johns Hopkins University** created a publicly available data repository to consolidate research efforts. 
 
 ## Introduction
 
@@ -48,11 +48,35 @@ df_ts <- read_csv(file = "C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - 
 ```{r}
 # Draw a line plot of cumulative cases vs. date
 # Label the y-axis
-ggplot(data = df_ts %>% group_by(date_observation) %>% summarize(confirmed = sum(total_confirmed)), 
-       aes(x = date_observation , y = confirmed)) +
-  geom_line() +
-  ylab(label = "Cumulative confirmed cases")
+# ggplot(data = df_ts %>% group_by(date_observation) %>% summarize(confirmed = sum(total_confirmed)), 
+#        aes(x = date_observation , y = confirmed)) +
+#   geom_line() +
+#   ylab(label = "Cumulative confirmed cases")
 ```
+
+Outline for the presentation:
+
+- Agenda (...)
+- Introduction
+  * The dataset (where is it from)
+  * Stanley's heatmap
+- Problem Formulation
+  * Biological insight questions
+  * General questions
+- Methodology
+  * Data workflow
+    * Data import & wrangling
+    * Data augmentation
+  * Analysis workflow
+    * Descriptive analytics
+    * SIR modeling
+
+    
+  * Packages & dependencies
+  * Analysis workflow
+
+Data Wrangling:
+- Flowchart about data wrangling
 
 
 

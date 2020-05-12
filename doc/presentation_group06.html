@@ -3142,7 +3142,7 @@ slide:not(.current) .plotly.html-widget{
 
 <p>From expert analysis and clinical information, we know that COVID19 spreads through <em><strong>respiratory droplets</strong></em>, such as when sneezing, coughing or speaking.</p>
 
-<p>Organizations and researchers across the whole world have been collecting data for monitoring and learning about this pandemic. Notably, the Johns Hopkins University created a publicly available data repository to consolidate research efforts.</p>
+<p>Organizations and researchers across the whole world have been collecting data for monitoring and learning about this pandemic. Notably, the <strong>Johns Hopkins University</strong> created a publicly available data repository to consolidate research efforts.</p>
 
 </article></slide><slide class=""><hgroup><h2>Introduction</h2></hgroup><article  id="introduction-2">
 
@@ -3151,6 +3151,75 @@ slide:not(.current) .plotly.html-widget{
 <p>Please note that infection spreading information and data regarding COVID19 is being updated every day. The data used for this project was first pulled on 15 April 2020, and has been updated accordingly since then. <strong>The last update of the data was done on 13 May 2020.</strong></p>
 
 </article></slide><slide class=""><hgroup><h2>Introduction</h2></hgroup><article  id="introduction-3">
+
+<pre >## -- Attaching packages -------------------------------------- tidyverse 1.3.0 --</pre>
+
+<pre >## v ggplot2 3.3.0     v purrr   0.3.4
+## v tibble  3.0.1     v dplyr   0.8.5
+## v tidyr   1.0.3     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.5.0</pre>
+
+<pre >## -- Conflicts ----------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</pre>
+
+<pre >## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   date_observation = col_date(format = &quot;&quot;),
+##   province = col_character(),
+##   country = col_character(),
+##   gender = col_character(),
+##   age_group = col_character(),
+##   date_onset = col_date(format = &quot;&quot;),
+##   date_admission_hospital = col_date(format = &quot;&quot;),
+##   date_exposure_start = col_date(format = &quot;&quot;),
+##   date_exposure_end = col_date(format = &quot;&quot;)
+## )</pre>
+
+<pre >## See spec(...) for full column specifications.</pre>
+
+<pre >## Parsed with column specification:
+## cols(
+##   `&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD` = col_character()
+## )</pre>
+
+<pre >## Warning: 43735 parsing failures.
+## row col  expected     actual                                                                                                                                                   file
+##   1  -- 1 columns 14 columns &#39;C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_ts_world_df_augm.csv&#39;
+##   2  -- 1 columns 14 columns &#39;C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_ts_world_df_augm.csv&#39;
+##   3  -- 1 columns 14 columns &#39;C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_ts_world_df_augm.csv&#39;
+##   4  -- 1 columns 14 columns &#39;C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_ts_world_df_augm.csv&#39;
+##   5  -- 1 columns 14 columns &#39;C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_ts_world_df_augm.csv&#39;
+## ... ... ......... .......... ......................................................................................................................................................
+## See problems(...) for more details.</pre>
+
+<p>Outline for the presentation:</p>
+
+<ul>
+<li>Agenda</li>
+<li>Introduction
+
+<ul>
+<li>The dataset (where is it from)</li>
+<li>Stanley’s heatmap</li>
+</ul></li>
+<li>Methodology
+
+<ul>
+<li>Data workflow
+
+<ul>
+<li>Data import &amp; wrangling</li>
+<li>Data augmentation</li>
+<li></li>
+</ul></li>
+<li>Packages &amp; dependencies</li>
+<li>Analysis workflow</li>
+</ul></li>
+</ul>
+
+<p>Data Wrangling: - Flowchart about data wrangling</p>
 
 </article></slide><slide class=""><hgroup><h2>Slide with Bullets</h2></hgroup><article  id="slide-with-bullets">
 

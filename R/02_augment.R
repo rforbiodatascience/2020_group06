@@ -1,25 +1,14 @@
 
-################################################################################
-########################### - Clear workspace - ################################
-################################################################################
 
 rm(list = ls())
 
-################################################################################
-############################ - Load libraries - ################################
-################################################################################
 
+# Load libraries
+# ------------------------------------------------------------------------------
 library(tidyverse)
-
-################################################################################
-########################### - Define functions - ###############################
-################################################################################
 
 source(file = "R/99_func.R")
 
-################################################################################
-############################## - Load data - ###################################
-################################################################################
 
 daily_covid_trends_df <- read_csv('.//data//_clean//daily_covid_trends_df_clean.csv')
 patient_data_first_df <- read_csv('.//data//_clean//patient_data_first_df_clean.csv')
@@ -30,14 +19,6 @@ ts_deaths_world_df <- read_csv('.//data//_clean//ts_deaths_world_df_clean.csv')
 ts_deaths_US_df <- read_csv('.//data//_clean//ts_deaths_US_df_clean.csv')
 ts_recovered_world_df <- read_csv('.//data//_clean//ts_recovered_world_df_clean.csv')
 population_by_country_df <- read_csv('.//data//_clean//population_by_country_df_clean.csv')
-
-
-
-
-
-
-
-
 
 
 ##############################################################################################################
@@ -229,17 +210,24 @@ final_ts_world_df <-
          total_deaths_per_mil_pop) %>%
 
   # Summarising
-  select(country,date_observation,total_confirmed:total_deaths_per_mil_pop) %>%
-  group_by(date_observation,country) %>%
-  summarise_if(is.numeric,funs(sum))
+  select(province,date_observation,total_confirmed:total_deaths_per_mil_pop) %>%
+  group_by(province,date_observation) %>%
+  summarise_if(is.numeric,funs(sum)) %>%
 
+  group_by(province) %>%
+  mutate(tmp_date = case_when(total_confirmed > 0 ~ date_observation)) %>%
+  mutate(days_since_first = date_observation - min(tmp_date, na.rm = TRUE)) %>%
+  ungroup %>%
+  select(-tmp_date) %>%
+  mutate(days_since_first = as.numeric(days_since_first,units="days"))
 
-
-
-
-
-
-
+# make df for SIR modelling
+SIR_df <- final_ts_world_df %>%
+  rename(N = total_population) %>%
+  mutate(I = total_confirmed - total_recovered - total_deaths) %>%
+  mutate(R = total_recovered + total_deaths) %>%
+  mutate(S = N - I - R) %>%
+  select(province, date_observation, days_since_first, S, I, R, N)
 
 
 #################################################################################
@@ -248,3 +236,4 @@ final_ts_world_df <-
 
 write_csv(x = final_patient_data_df, path = ".//data//_augmented//final_patient_data_df_augm.csv")
 write_csv(x = final_ts_world_df,     path = ".//data//_augmented//final_ts_world_df_augm.csv")
+write_csv(x = SIR_df,                path = ".//data//_augmented//SIR_df.csv")
