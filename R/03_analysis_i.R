@@ -359,7 +359,11 @@ df_patient %>%
   select(-is_dead,-is_recovered) %>%
   rpart(result ~ .,.,method = 'class', model = TRUE,
         minsplit = 2, minbucket = 1, cp = 0.01) %>%
-  rpart.plot(extra = 101, main = "Decision Tree")
+  rpart.plot(extra = 101, main = "Decision Tree") +
+  ggsave(path = "results",
+         filename = "dec_tree.png",
+         width = 6,
+         height = 5)
 
 
 # Performing logistic regression
