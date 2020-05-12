@@ -1,38 +1,14 @@
 
-<<<<<<< HEAD
-########################################################
-############### - Clear workspace - ####################
-########################################################
 
 rm(list = ls())
 
-########################################################
-################ - Load libraries - ####################
-########################################################
-=======
-
-rm(list = ls())
-
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
 
 # Load libraries
 # ------------------------------------------------------------------------------
 library(tidyverse)
 
-<<<<<<< HEAD
-########################################################
-############### - Define functions - ###################
-########################################################
-
 source(file = "R/99_func.R")
 
-########################################################
-################## - Load data - #######################
-########################################################
-=======
-source(file = "R/99_func.R")
-
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
 
 daily_covid_trends_df <- read_csv('.//data//_clean//daily_covid_trends_df_clean.csv')
 patient_data_first_df <- read_csv('.//data//_clean//patient_data_first_df_clean.csv')
@@ -45,23 +21,12 @@ ts_recovered_world_df <- read_csv('.//data//_clean//ts_recovered_world_df_clean.
 population_by_country_df <- read_csv('.//data//_clean//population_by_country_df_clean.csv')
 
 
-<<<<<<< HEAD
-
-
-#####################################################################################
-#################### - AUGMENTING patient_data_first/second_df - ####################
-#####################################################################################
-
-
-############### - CREATE AGE GROUPS for the two dataframes - ###############
-=======
 ##############################################################################################################
 ############################## - AUGMENTING patient_data_first/second_df - ###################################
 ##############################################################################################################
 
 
 ########################### - CREATE AGE GROUPS for the two dataframes - ###########################
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
 
 # The age groups have been selected and defined according page 8 from the report done on COVID19
 # by Statens Serum Insitut: "Ekspertrapport: Matematisk modellering af COVID-19 smittespredning
@@ -97,7 +62,7 @@ patient_data_second_df <-
   select(date_observation:gender, age, age_group, date_onset:long)
 
 
-############### - COMBINE THE TWO PATIENT DATASETS INTO ONE - ###############
+########################### - COMBINE THE TWO PATIENT DATASETS INTO ONE - ###########################
 
 final_patient_data_df <-
   patient_data_first_df %>%
@@ -105,7 +70,7 @@ final_patient_data_df <-
   arrange(date_observation)
 
 
-############### - CREATE CATEGORICAL columns for each unique symptom (making data in wide format) - ###############
+########################### - CREATE CATEGORICAL columns for each unique symptom (making data in wide format) - ###########################
 
 final_patient_data_df <-
   final_patient_data_df %>%
@@ -118,8 +83,7 @@ final_patient_data_df <-
   # For every symptom that contains a space inside its name (e.g. 'sore throat'),
   # replace the whitespace with a '_' sign, so that column naming will be easy-to-use
 
-  mutate(symptoms_set = str_replace_all(
-    symptoms_set, pattern = '([^,])( )', replacement = '\\1_')) %>%
+  mutate(symptoms_set = str_replace_all(symptoms_set, pattern = '([^,])( )', replacement = '\\1_')) %>%
 
   # Separates the multiple symptoms into 6 different columns (because 6 is the maximum number
   # of concurrent symptoms that we have in this dataset)
@@ -136,8 +100,8 @@ final_patient_data_df <-
                names_to = 'sX',
                values_to = 'symptoms') %>%
 
-  # After this, we will actually never use the 'names_to' column ('sX'),
-  # since that was just a placeholder so that we can have long format for our data
+  # After this, we will actually never use the 'names_to' column ('sX'), since that was just a placeholder
+  # so that we can have long format for our data
 
   select(-sX) %>%
 
@@ -164,7 +128,7 @@ final_patient_data_df <-
   select(-c('surrogate_key', 'NA'))
 
 
-############### - CONVERT COLS TO FACTOR - ###############
+########################### - CONVERT COLS TO FACTOR - ###########################
 
 # The columns 'gender' and 'age_group' are categorical columns, and should be treated as such
 
@@ -172,20 +136,23 @@ final_patient_data_df <-
   final_patient_data_df %>%
   mutate(gender = factor(gender, levels = c('male', 'female'))) %>%
   mutate(age_group = factor(age_group,
-                            levels = c("00-04", "05-09",
-                                       "10-14", "15-19",
-                                       "20-29", "30-39",
-                                       "40-49", "50-59",
-                                       "60-69", "70+")))
+                            levels = c("00-04", "05-09", "10-14", "15-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+")))
 
 
 
-################################################################################
-############# - AUGMENTING NON-US TIMESERIES DF (ts_..._df) - ##################
-################################################################################
 
 
-############### - COMBINE THE THREE TIME-SERIES DATASETS INTO ONE - ###############
+
+
+
+
+
+##################################################################################################################
+############################## - AUGMENTING NON-US TIMESERIES DF (ts_..._df) - ###################################
+##################################################################################################################
+
+
+########################### - COMBINE THE THREE TIME-SERIES DATASETS INTO ONE - ###########################
 
 # Rename the 'cases' column in each time-series dataframe, in order to facilitate joining
 
@@ -211,7 +178,7 @@ final_ts_world_df <-
   mutate(total_recovered = replace_na(total_recovered, 0))
 
 
-############### - AUGMENT THE TIME-SERIES WITH POPULATION DATA - ###############
+########################### - AUGMENT THE TIME-SERIES WITH POPULATION DATA - ###########################
 
 final_ts_world_df <-
 
@@ -243,18 +210,6 @@ final_ts_world_df <-
          total_deaths_per_mil_pop) %>%
 
   # Summarising
-<<<<<<< HEAD
-  select(country,date_observation,total_confirmed:total_deaths_per_mil_pop) %>%
-  group_by(date_observation,country) %>%
-  summarise_if(is.numeric,funs(sum))
-
-
-
-
-#########################################################
-################## - Write data - #######################
-#########################################################
-=======
   select(province,date_observation,total_confirmed:total_deaths_per_mil_pop) %>%
   group_by(province,date_observation) %>%
   summarise_if(is.numeric,funs(sum)) %>%
@@ -278,7 +233,6 @@ SIR_df <- final_ts_world_df %>%
 #################################################################################
 ############################## - Write data - ###################################
 #################################################################################
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
 
 write_csv(x = final_patient_data_df, path = ".//data//_augmented//final_patient_data_df_augm.csv")
 write_csv(x = final_ts_world_df,     path = ".//data//_augmented//final_ts_world_df_augm.csv")
