@@ -47,6 +47,7 @@ ggplot(data=df_ts %>%
 
 # SIR modelling
 # ------------------------------------------------------------------------------
+<<<<<<< HEAD
 SIR <- function(time,state,parameters) {
   with(as.list(c(state,parameters)), {
   dS = -beta*I*S / N
@@ -56,6 +57,9 @@ SIR <- function(time,state,parameters) {
   return(list(c(dS,dI,dR)))
   })
 }
+=======
+
+>>>>>>> c4f779187185e96f87d576131c3af2526d8eb671
 
 parameters <- c(
   beta = 0.000000001,
