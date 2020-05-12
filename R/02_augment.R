@@ -1,5 +1,4 @@
 
-<<<<<<< HEAD
 ########################################################
 ############### - Clear workspace - ####################
 ########################################################
@@ -9,17 +8,14 @@ rm(list = ls())
 ########################################################
 ################ - Load libraries - ####################
 ########################################################
-=======
 
 rm(list = ls())
-
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
 
 # Load libraries
 # ------------------------------------------------------------------------------
 library(tidyverse)
 
-<<<<<<< HEAD
+
 ########################################################
 ############### - Define functions - ###################
 ########################################################
@@ -29,10 +25,9 @@ source(file = "R/99_func.R")
 ########################################################
 ################## - Load data - #######################
 ########################################################
-=======
+
 source(file = "R/99_func.R")
 
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
 
 daily_covid_trends_df <- read_csv('.//data//_clean//daily_covid_trends_df_clean.csv')
 patient_data_first_df <- read_csv('.//data//_clean//patient_data_first_df_clean.csv')
@@ -45,8 +40,6 @@ ts_recovered_world_df <- read_csv('.//data//_clean//ts_recovered_world_df_clean.
 population_by_country_df <- read_csv('.//data//_clean//population_by_country_df_clean.csv')
 
 
-<<<<<<< HEAD
-
 
 #####################################################################################
 #################### - AUGMENTING patient_data_first/second_df - ####################
@@ -54,14 +47,14 @@ population_by_country_df <- read_csv('.//data//_clean//population_by_country_df_
 
 
 ############### - CREATE AGE GROUPS for the two dataframes - ###############
-=======
+
 ##############################################################################################################
 ############################## - AUGMENTING patient_data_first/second_df - ###################################
 ##############################################################################################################
 
 
 ########################### - CREATE AGE GROUPS for the two dataframes - ###########################
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
+
 
 # The age groups have been selected and defined according page 8 from the report done on COVID19
 # by Statens Serum Insitut: "Ekspertrapport: Matematisk modellering af COVID-19 smittespredning
@@ -243,7 +236,6 @@ final_ts_world_df <-
          total_deaths_per_mil_pop) %>%
 
   # Summarising
-<<<<<<< HEAD
   select(country,date_observation,total_confirmed:total_deaths_per_mil_pop) %>%
   group_by(date_observation,country) %>%
   summarise_if(is.numeric,funs(sum))
@@ -254,7 +246,8 @@ final_ts_world_df <-
 #########################################################
 ################## - Write data - #######################
 #########################################################
-=======
+
+final_patient_data_df <-
   select(province,date_observation,total_confirmed:total_deaths_per_mil_pop) %>%
   group_by(province,date_observation) %>%
   summarise_if(is.numeric,funs(sum)) %>%
@@ -278,7 +271,6 @@ SIR_df <- final_ts_world_df %>%
 #################################################################################
 ############################## - Write data - ###################################
 #################################################################################
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
 
 write_csv(x = final_patient_data_df, path = ".//data//_augmented//final_patient_data_df_augm.csv")
 write_csv(x = final_ts_world_df,     path = ".//data//_augmented//final_ts_world_df_augm.csv")
