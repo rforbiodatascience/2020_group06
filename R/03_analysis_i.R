@@ -13,6 +13,7 @@ library("broom")
 library("purrr")
 library("rpart")
 library("rpart.plot")
+library("mapview")
 
 # Define functions
 # ------------------------------------------------------------------------------
@@ -42,6 +43,12 @@ df_patient %>%
   labs(title = "Distribution of age group by gender",
        subtitle= "COVID-19 affected", x = "Age group", y = "Count")
 
+ggsave(path = "results",
+       filename = "Distribution_age_group_gender.png",
+       plot = last_plot(),
+       width = 6,
+       height = 5)
+
 
 ### Smoothing of time 2 admin as a function of age, grouped by gender and dead
 
@@ -59,6 +66,12 @@ df_patient %>%
        subtitle= "COVID-19 affected", x = "Age",
        y = "Day(s)")
 
+ggsave(path = "results",
+       filename = "Onset_to_admission.png",
+       plot = last_plot(),
+       width = 6,
+       height = 5)
+
 
 
 ### Boxplot of age range, by is_dead, contact with wuhan and had a fever
@@ -72,6 +85,12 @@ df_patient %>%
              labeller = label_both, scales = "free") +
   labs(title = "Age distribution by symptoms, death and contact with wuhan",
        subtitle= "COVID-19 affected", x = "Dyspnea", y = "Age")
+
+ggsave(path = "results",
+       filename = "Age_symptoms_death_wuhan.png",
+       plot = last_plot(),
+       width = 6,
+       height = 5)
 
 
 
@@ -88,6 +107,11 @@ df_patient %>%
   labs(title = "Numbers of cases (above 100) between Jan-feb 2020",
        subtitle= "COVID-19 affected", x = "", y = "Count")
 
+ggsave(path = "results",
+       filename = "Cases_above_hundred.png",
+       plot = last_plot(),
+       width = 6,
+       height = 5)
 
 ### Barplot of the symptoms (only when counts > 10 for visualization purposes)
 
@@ -104,10 +128,16 @@ df_patient %>%
        subtitle= "Observed in more than 10 cases",
        x = "Symptoms", y = "Count")
 
+ggsave(path = "results",
+       filename = "Prevalence_symptoms.png",
+       plot = last_plot(),
+       width = 6,
+       height = 5)
+
 
 ### Heatmap of cases (without china)
 
-df_patient %>%
+df_heat<- df_patient %>%
   #filter(country != "China") %>%
   drop_na(long,lat) %>%
   leaflet() %>%
@@ -116,7 +146,9 @@ df_patient %>%
   addHeatmap(lng = ~long, lat = ~lat,
              blur = 9, max = 0.05, radius = 6) %>%
   addMarkers(clusterOptions =
-               markerClusterOptions())
+               markerClusterOptions()) %>%
+  mapshot(.,file= "results/heatmap_world.png")
+
 
 # labels not possible!
 # labs(title = "Confirmed cases",
@@ -188,7 +220,11 @@ df_ts %>%
   geom_line(aes(date_observation, total_confirmed_per_mil_pop, color = country)) +
   labs(title = "Confirmed cases per million population",
        subtitle= "COVID-19 affected",
-       x = "Date", y = "Count per million population")
+       x = "Date", y = "Count per million population") +
+  ggsave(path = "results",
+       filename = "Confirmed_per_mill.png",
+       width = 6,
+       height = 5)
 
 ### Total deaths per mil pop
 df_ts %>%
@@ -198,13 +234,17 @@ df_ts %>%
   geom_line(aes(date_observation, total_deaths_per_mil_pop, color = country)) +
   labs(title = "Death(s) per million population",
        subtitle= "COVID-19 affected",
-       x = "Date", y = "Count per million population")
+       x = "Date", y = "Count per million population") +
+  ggsave(path = "results",
+         filename = "deaths_per_mill.png",
+         width = 6,
+         height = 5)
 
 
 # Model data: Time Series
 # ------------------------------------------------------------------------------
 
-#Selecting few countries and nesting per country and time series type
+# Selecting few countries and nesting per country and time series type
 df_ts_selected<- df_ts %>%
   filter(country %in% c("Denmark","Sweden", "Romania","Turkey","Philippines")) %>%
   filter(date_observation >= "2020-03-11") %>%
@@ -227,19 +267,25 @@ df_ts_models<- df_ts_selected %>%
 
 
 ##### Showing model estimate (coefficient) confirmed per mil pop
+
 df_ts_models %>%
   unnest(tidy,conf) %>%
   filter(ts == "total_confirmed_per_mil_pop",term == "date_observation") %>%
   select(ts_country,estimate,conf.low,conf.high) %>%
-  ggplot(aes(estimate,ts_country,color = ts_country),show.legend = FALSE) +
+  ggplot(aes(estimate, ts_country, color = ts_country), show.legend = FALSE) +
   geom_point() +
-  geom_errorbarh(aes(xmin= conf.low, xmax = conf.high)) +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
   labs(title = "Model evaluation of confirmed cases",
        subtitle= "COVID-19 affected",
-       x = "Estimated coefficient", y = "Country")
+       x = "Estimated coefficient", y = "Country") +
+  ggsave(path = "results",
+         filename = "model_eval_confirmed.png",
+         width = 6,
+         height = 5)
 
 
 ##### Showing model estimate (coefficient) deaths per mil pop
+
 df_ts_models %>%
   unnest(tidy,conf) %>%
   filter(ts == "total_deaths_per_mil_pop",term == "date_observation") %>%
@@ -249,10 +295,15 @@ df_ts_models %>%
   geom_errorbarh(aes(xmin= conf.low, xmax = conf.high)) +
   labs(title = "Model evaluation of death cases",
        subtitle= "COVID-19 affected",
-       x = "Estimated coefficient", y = "Country")
+       x = "Estimated coefficient", y = "Country") +
+  ggsave(path = "results",
+         filename = "model_eval_death.png",
+         width = 6,
+         height = 5)
 
 
 ##### Evaluation of the models based on the residuals per country
+
 df_ts_models %>%
   unnest(aug) %>%
   select(count,.resid) %>%
@@ -263,13 +314,18 @@ df_ts_models %>%
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(title = "Model evaluation (residuals)",
        subtitle= "COVID-19",
-       x = "Country", y = "Residuals")
+       x = "Country", y = "Residuals") +
+  ggsave(path = "results",
+         filename = "model_eval_residuals.png",
+         width = 6,
+         height = 5)
 
 
 # Model data: Patient data
 # ------------------------------------------------------------------------------
 
 # subsetting data frame for the pca
+
 df_patient_sub<- df_patient %>%
   select(gender,age,contact_with_Wuhan:is_recovered,chills:thirst) %>%
   na.omit() %>%
@@ -278,6 +334,7 @@ df_patient_sub<- df_patient %>%
 
 
 # Making PCA of the subset and removing columns that only contains zeros - showing variance
+
 df_patient_sub %>%
   select_if(~length(unique(.)) > 1) %>%
   prcomp(center = TRUE, scale. = TRUE) %>%
@@ -286,7 +343,8 @@ df_patient_sub %>%
   geom_col()
 
 
-# Showing decicion tree ????????
+# Showing decicion tree
+
 df_patient %>%
   select(country,gender,age,contact_with_Wuhan:is_recovered,
          chills:thirst) %>%
@@ -301,7 +359,7 @@ df_patient %>%
   select(-is_dead,-is_recovered) %>%
   rpart(result ~ .,.,method = 'class', model = TRUE,
         minsplit = 2, minbucket = 1, cp = 0.01) %>%
-  rpart.plot(extra = 101)
+  rpart.plot(extra = 101, main = "Decision Tree")
 
 
 # Performing logistic regression
@@ -317,17 +375,20 @@ df_patient_glm<- df_patient %>%
 
 
 # making model prediction for being dead
+
 df_patient_glm %>%
   glm(is_dead ~ ., ., family = binomial()) %>%
   summary()
 
 
 # selecting significant variables
+
 df_patient_glm_is_dead<- df_patient_glm %>%
   select(is_dead, gender, age, contact_with_Wuhan, fever)
 
 
 # showing the summary (estimate + std.error)
+
 df_patient_glm_is_dead %>%
   glm(is_dead ~ ., ., family = binomial()) %>%
   tidy() %>%
@@ -343,6 +404,7 @@ df_patient_glm_is_dead %>%
 
 
 ##### Using augment
+
 df_patient_glm_is_dead %>%
   glm(is_dead ~ ., ., family = binomial) %>%
   augment(type.predict = "response") %>%
@@ -354,37 +416,6 @@ df_patient_glm_is_dead %>%
   ggtitle("Logistic regression model fit") +
   xlab("Age") +
   ylab("Probability")
-
-
-
-### Plotting hat vs. resid
-df_patient_glm_is_dead %>%
-  glm(is_dead ~ ., ., family = binomial()) %>%
-  augment() %>%
-  ggplot(aes(.hat, .std.resid)) +
-  geom_vline(size = 2, colour = "white", xintercept = 0) +
-  geom_hline(size = 2, colour = "white", yintercept = 0) +
-  geom_point() + geom_smooth(se = FALSE)
-
-
-### Plotting .hat vs. cook's distance
-df_patient_glm_is_dead %>%
-  glm(is_dead ~ ., ., family = binomial()) %>%
-  augment() %>%
-  ggplot(aes(.hat, .cooksd)) +
-  geom_vline(xintercept = 0, colour = NA) +
-  geom_abline(slope = seq(0, 3, by = 0.5), colour = "white") +
-  geom_smooth(se = FALSE) +
-  geom_point() +
-  labs(title = "Model evaluation logsitic regression",
-       subtitle= "COVID-19 affected",
-       x = "Estimated values", y = "Coock's distance")
-
-
-
-df_patient_glm_is_dead %>%
-  glm(is_dead ~ ., ., family = binomial()) %>%
-  glance()
 
 
 
