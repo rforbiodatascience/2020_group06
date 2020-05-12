@@ -63,15 +63,21 @@ Outline for the presentation:
 - Problem Formulation
   * Biological insight questions
   * General questions
-- Methodology
+- Methodology (how we did things, no results)
   * Data workflow
     * Data import & wrangling
     * Data augmentation
   * Analysis workflow
     * Descriptive analytics
     * SIR modeling
+- Results
+  * 
+- Discussion
+  * Shiny
+- Conclusion
+- "Thank you"/"Questions?" slide
 
-    
+
   * Packages & dependencies
   * Analysis workflow
 
