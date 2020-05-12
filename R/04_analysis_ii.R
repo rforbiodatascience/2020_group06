@@ -7,6 +7,7 @@ rm(list = ls())
 # ------------------------------------------------------------------------------
 library("tidyverse")
 library("purr")
+library("deSolve")
 
 # Define functions
 # ------------------------------------------------------------------------------
@@ -20,51 +21,88 @@ df_ts <- read_csv(file = "data/_augmented/final_ts_world_df_augm.csv")
 
 
 df_ts <- df_ts %>%
-  group_by(country) %>%
+  group_by(province) %>%
   mutate(tmp_date = case_when(total_confirmed > 0 ~ date_observation)) %>%
   mutate(days_since_first = date_observation - min(tmp_date, na.rm = TRUE)) %>%
   ungroup %>%
   select(-tmp_date) %>%
   mutate(days_since_first = as.numeric(days_since_first,units="days"))
 
+df_SIR = df_ts %>%
+  rename(N = total_population) %>%
+  mutate(I = total_confirmed - total_recovered - total_deaths) %>%
+  mutate(R = total_recovered + total_deaths) %>%
+  mutate(S = N - I - R) %>%
+  select(province, N, date_observation, days_since_first, S, I, R)
 
 
 # Plot time series
 # ------------------------------------------------------------------------------
 ggplot(data=df_ts %>%
-         filter(country == 'Denmark' | country == 'Sweden' | country == 'Norway'),
+         filter(province == 'Denmark' | province == 'Norway' | province == 'Sweden'),
        mapping = aes(x = days_since_first, y = total_confirmed,
-                     group = country, color = country)) +
+                     group = province, color = province)) +
   geom_point() +
   xlim(c(0,100))
 
 # SIR modelling
 # ------------------------------------------------------------------------------
-SIR <- function(date,data,pars) {
-  dS = -beta*I*S
-  dI = beta*I*S - gamma*I
+SIR <- function(time,state,parameters) {
+  with(as.list(c(state,parameters)), {
+  dS = -beta*I*S / N
+  dI = beta*I*S / N - gamma*I
   dR = gamma*I
-  dD = mu*I
-  return(c(dS,dI,dR,dD))
+  #dD = mu*I
+  return(list(c(dS,dI,dR)))
+  })
 }
 
-df_SIR = df_ts %>%
-  rename(N = total_population) %>%
-  mutate(I = total_confirmed - total_recovered - total_deaths) %>%
-  mutate(R = total_recovered) %>%
-  mutate(S = N - I - R) %>%
-  select(country, days_since_first, I, R)
+parameters <- c(
+  beta = 0.000000001,
+  gamma = 0.000005
+)
+
+times = seq(1,80)
+
+ode(y=initial_values, times = times, func = SIR, parms = parameters)
+
+N <- df_ts %>% filter(province == 'Denmark') %>% select(total_population) %>% min()
+
+initial_values <- c(
+  S = N - 1,
+  I = 1,
+  R = 0
+)
+
+RSS <- function(parameters) {
+  fit = ode(y=initial_values, times = times, func = SIR, parms = parameters)[, 3]
+  return(sum((fit - df_SIR %>% filter(province == "Denmark") %>% select(I))^2))
+}
+
+opt <- optim(c(beta=0.5, gamma=0.5),
+             RSS,
+             method = "L-BFGS-B",
+             lower = c(0, 0),
+             upper = c(1, 1)
+)
+
+opt$par
+
+df_fitted <- ode(y=initial_values, times = times, func = SIR, parms = opt$par) %>% as_tibble()
+
+ggplot(df_fitted, mapping = aes(x = time, y = I)) +
+  geom_point() +
+  xlim(c(0,100))
 
 df_SIR_long <- df_SIR %>%
+  select(province, date_observation, days_since_first, I, R) %>%
   filter(days_since_first>=0) %>%
-  pivot_longer(cols = c(-country,-days_since_first),
+  pivot_longer(cols = c(-province,-date_observation,-days_since_first),
                names_to = "variable",
                values_to = "value")
 
-ggplot(data=df_SIR_long %>% filter(country == "Denmark"),
-       mapping = aes(x = days_since_first, y = value, group = variable, color = variable)) +
+ggplot(data=df_SIR_long %>% filter(province == "Denmark"),
+       mapping = aes(x = date_observation, y = value, group = variable, color = variable)) +
   geom_point()
-
-
 
 
