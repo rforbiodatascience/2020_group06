@@ -6,12 +6,8 @@ rm(list = ls())
 # Load libraries
 # ------------------------------------------------------------------------------
 library("tidyverse")
-<<<<<<< HEAD
-library("purrr")
-=======
 library("purr")
 library("deSolve")
->>>>>>> 2efafc027b197d9132d8b2ada10ce75e19d33cc8
 
 # Define functions
 # ------------------------------------------------------------------------------
