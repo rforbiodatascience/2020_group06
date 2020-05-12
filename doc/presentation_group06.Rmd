@@ -1,0 +1,76 @@
+---
+title: "presentation_group06"
+author: "Sebastian Sbirna, Sule Altinas & Stanley Frederiksen"
+date: "14 May 2020"
+output:
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+At the end of December 2019, __COVID19__ (also known as SARS-CoV-2) coronavirus was first identified to be outbreaking in Wuhan, China. The virus continued to spread rapidly across the whole area of China, and later on, in some regions of Europe as well. 
+
+On the day of __11 March 2020__, the World Health Organization (WHO) had acknowledged the fast spreading and major health risks of the COVID19 outbreak, and have classified it as a *__pandemic__*. The world has been majorly affected, with the deepest outbreaks in China, USA and Italy.
+
+
+Some questions that one can immediately ask are: 
+
+- **How quickly did the virus spread across the globe?**
+- **Can we see any effect from country-wide policies that various countries have implemented, such as shutdowns and quarantines?**
+
+
+## Introduction
+
+From expert analysis and clinical information, we know that COVID19 spreads through *__respiratory droplets__*, such as when sneezing, coughing or speaking. 
+
+Organizations and researchers across the whole world have been collecting data for monitoring and learning about this pandemic. Notably, the Johns Hopkins University created a publicly available data repository to consolidate research efforts. 
+
+## Introduction
+
+Our project has used a modified version of this data, which is available from Kaggle: <https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset>, by _Sudalai Rajkumar_, which consists of both patient data from the first 2 months of the outbreak with time-series data about the spread of the virus.
+
+Please note that infection spreading information and data regarding COVID19 is being updated every day. The data used for this project was first pulled on 15 April 2020, and has been updated accordingly since then. __The last update of the data was done on 13 May 2020.__
+
+## Introduction
+
+```{r echo=FALSE}
+library("tidyverse")
+
+df_patient <- read_csv(file = "C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_patient_data_df_augm.csv")
+df_ts <- read_csv(file = "C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_ts_world_df_augm.csv")
+```
+
+```{r}
+# Draw a line plot of cumulative cases vs. date
+# Label the y-axis
+ggplot(data = df_ts %>% group_by(date_observation) %>% summarize(confirmed = sum(total_confirmed)), 
+       aes(x = date_observation , y = confirmed)) +
+  geom_line() +
+  ylab(label = "Cumulative confirmed cases")
+```
+
+
+
+## Slide with Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Slide with R Output
+
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+

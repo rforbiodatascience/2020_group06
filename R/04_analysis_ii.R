@@ -6,7 +6,6 @@ rm(list = ls())
 # Load libraries
 # ------------------------------------------------------------------------------
 library("tidyverse")
-library("purr")
 
 # Define functions
 # ------------------------------------------------------------------------------
@@ -28,20 +27,17 @@ df_ts <- df_ts %>%
   mutate(days_since_first = as.numeric(days_since_first,units="days"))
 
 
-
 # Plot time series
 # ------------------------------------------------------------------------------
-ggplot(data=df_ts %>%
-         filter(country == 'Denmark' | country == 'Sweden' | country == 'Norway'),
-       mapping = aes(x = days_since_first, y = total_confirmed,
-                     group = country, color = country)) +
+ggplot(data = (df_ts %>%
+                 filter(country == 'Denmark' | country == 'Sweden' | country == 'Norway')),
+       mapping = aes(x = days_since_first, y = total_confirmed, group = country, color = country)) +
   geom_point() +
   xlim(c(0,100))
 
+
 # SIR modelling
 # ------------------------------------------------------------------------------
-
-
 df_SIR = df_ts %>%
   rename(N = total_population) %>%
   mutate(I = total_confirmed - total_recovered - total_deaths) %>%
@@ -58,7 +54,3 @@ df_SIR_long <- df_SIR %>%
 ggplot(data=df_SIR_long %>% filter(country == "Denmark"),
        mapping = aes(x = days_since_first, y = value, group = variable, color = variable)) +
   geom_point()
-
-
-
-
