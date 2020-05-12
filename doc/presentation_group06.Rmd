@@ -56,30 +56,31 @@ df_ts <- read_csv(file = "C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - 
 
 Outline for the presentation:
 
-- Agenda (...)
+- Agenda (...)                     - Sule
 - Introduction
-  * The dataset (where is it from)
-  * Stanley's heatmap
+  * The dataset (where is it from) - Sebastian (Sule help)
+  * Stanley's heatmap              - Stanley
 - Problem Formulation
-  * Biological insight questions
-  * General questions
+  * Biological insight questions   - Stanley
+  * General questions              - Sule & Stanley
 - Methodology (how we did things, no results)
-  * Data workflow
-    * Data import & wrangling
-    * Data augmentation
-  * Analysis workflow
-    * Descriptive analytics
-    * SIR modeling
+  * Packages                       - Sule & Stanley
+  * Data workflow                  
+    * Data import & wrangling      - Sebastian
+    * Data augmentation            - Sebastian
+  * Analysis workflow              
+    * Descriptive analytics        - Stanley
+    * SIR modeling                 - Sule
 - Results
-  * 
-- Discussion
-  * Shiny
-- Conclusion
-- "Thank you"/"Questions?" slide
+  * Descriptive statistics results - Sebastian, Stanley
+  * SIR modeling results           - Sule
+  * Patient symptoms results       - Sebastian, Stanley
+    - Symptom correlation plot (pivot_longer)
+- Discussion                       - Sule
+  * Shiny                          - Sule
+- Conclusion                       - All
+- "Thank you"/"Questions?" slide   - Sebastian
 
-
-  * Packages & dependencies
-  * Analysis workflow
 
 Data Wrangling:
 - Flowchart about data wrangling
