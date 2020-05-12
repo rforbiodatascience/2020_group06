@@ -6,11 +6,8 @@ rm(list = ls())
 # Load libraries
 # ------------------------------------------------------------------------------
 library("tidyverse")
-<<<<<<< HEAD
-=======
 library("purr")
 library("deSolve")
->>>>>>> e4a44832da00da9f48f996a1cafef62d6c0788f9
 
 # Define functions
 # ------------------------------------------------------------------------------
@@ -38,33 +35,18 @@ df_SIR = df_ts %>%
   mutate(S = N - I - R) %>%
   select(province, N, date_observation, days_since_first, S, I, R)
 
+
 # Plot time series
 # ------------------------------------------------------------------------------
-<<<<<<< HEAD
-ggplot(data = (df_ts %>%
-                 filter(country == 'Denmark' | country == 'Sweden' | country == 'Norway')),
-       mapping = aes(x = days_since_first, y = total_confirmed, group = country, color = country)) +
-=======
 ggplot(data=df_ts %>%
          filter(province == 'Denmark' | province == 'Norway' | province == 'Sweden'),
        mapping = aes(x = days_since_first, y = total_confirmed,
                      group = province, color = province)) +
->>>>>>> e4a44832da00da9f48f996a1cafef62d6c0788f9
   geom_point() +
   xlim(c(0,100))
 
-
 # SIR modelling
 # ------------------------------------------------------------------------------
-<<<<<<< HEAD
-df_SIR = df_ts %>%
-  rename(N = total_population) %>%
-  mutate(I = total_confirmed - total_recovered - total_deaths) %>%
-  mutate(R = total_recovered) %>%
-  mutate(S = N - I - R) %>%
-  select(country, days_since_first, I, R)
-=======
-<<<<<<< HEAD
 SIR <- function(time,state,parameters) {
   with(as.list(c(state,parameters)), {
   dS = -beta*I*S / N
@@ -74,9 +56,6 @@ SIR <- function(time,state,parameters) {
   return(list(c(dS,dI,dR)))
   })
 }
-=======
-
->>>>>>> c4f779187185e96f87d576131c3af2526d8eb671
 
 parameters <- c(
   beta = 0.000000001,
@@ -114,7 +93,6 @@ df_fitted <- ode(y=initial_values, times = times, func = SIR, parms = opt$par) %
 ggplot(df_fitted, mapping = aes(x = time, y = I)) +
   geom_point() +
   xlim(c(0,100))
->>>>>>> e4a44832da00da9f48f996a1cafef62d6c0788f9
 
 df_SIR_long <- df_SIR %>%
   select(province, date_observation, days_since_first, I, R) %>%
@@ -126,8 +104,5 @@ df_SIR_long <- df_SIR %>%
 ggplot(data=df_SIR_long %>% filter(province == "Denmark"),
        mapping = aes(x = date_observation, y = value, group = variable, color = variable)) +
   geom_point()
-<<<<<<< HEAD
-=======
 
 
->>>>>>> e4a44832da00da9f48f996a1cafef62d6c0788f9
