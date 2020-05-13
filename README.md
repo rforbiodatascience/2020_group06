@@ -1,11 +1,9 @@
 # 2020_group06: COVID-19 analysis and modelling
-
-![](./img/project_flowchart.png)
-
 ---
-
-## Sule Altintas, Sebastian Sbirna & Stanley Frederiksen <br>
-### 14th of May 2020
+## Sule Altintas, Sebastian Sbirna and Stanley Frederiksen
+---
+![](./img/project_flowchart.png)
+---
 
 ## Description
 
