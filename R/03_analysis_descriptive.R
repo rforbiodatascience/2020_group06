@@ -93,7 +93,7 @@ ggsave(path = "results",
 
 
 
-### Barplot in polar coordinates of incidents pr. region above 100
+### Barplot in polar coordinates of incidents pr. province above 100
 
 df_patient %>%
   group_by(country) %>%
@@ -161,17 +161,17 @@ df_patient %>%
 
 ##### Comparing total confirmed per mill. population
 p1<- df_ts %>%
-  filter(region %in% c("Denmark","Sweden")) %>%
+  filter(province %in% c("Denmark","Sweden")) %>%
   ggplot() +
-  geom_line(aes(date_observation,total_confirmed_per_mil_pop ,color = region)) +
+  geom_line(aes(date_observation,total_confirmed_per_mil_pop ,color = province)) +
   labs(title = "Confirmed and Death per mill population")
 
 
 ##### Comparing total deaths per mill. population
 p2<- df_ts %>%
-  filter(region %in% c("Denmark","Sweden")) %>%
+  filter(province %in% c("Denmark","Sweden")) %>%
   ggplot() +
-  geom_line(aes(date_observation,total_deaths_per_mil_pop,color = region))
+  geom_line(aes(date_observation,total_deaths_per_mil_pop,color = province))
 
 
 ##### Plotting both of the total death
@@ -193,12 +193,12 @@ ggarrange(p1, p2, ncol=1, nrow=2, align = "v") %>%
 # and Philippines per mill. population
 
 df_ts %>%
-  filter(region %in% c("Denmark", "Sweden", "Romania",
+  filter(province %in% c("Denmark", "Sweden", "Romania",
                        "Turkey", "Philippines")) %>%
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   ggplot() +
   geom_line(aes(date_observation, total_confirmed_per_mil_pop,
-                color = region)) +
+                color = province)) +
   labs(title = "Confirmed case(s) per million population",
        subtitle= "COVID-19 affected",
        x = "Date", y = "Count per million population") +
@@ -210,11 +210,11 @@ df_ts %>%
 ### Total deaths per mil pop
 
 df_ts %>%
-  filter(region %in% c("Denmark", "Sweden", "Romania",
+  filter(province %in% c("Denmark", "Sweden", "Romania",
                        "Turkey", "Philippines")) %>%
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   ggplot() +
-  geom_line(aes(date_observation, total_deaths_per_mil_pop, color = region)) +
+  geom_line(aes(date_observation, total_deaths_per_mil_pop, color = province)) +
   labs(title = "Death(s) per million population",
        subtitle= "COVID-19 affected",
        x = "Date", y = "Count per million population") +
@@ -227,19 +227,19 @@ df_ts %>%
 # Model data: Time Series
 # ------------------------------------------------------------------------------
 
-# Selecting few countries and nesting per region and time series type
+# Selecting few countries and nesting per province and time series type
 df_ts_selected<- df_ts %>%
-  filter(region %in% c("Denmark", "Sweden", "Romania",
+  filter(province %in% c("Denmark", "Sweden", "Romania",
                        "Turkey","Philippines")) %>%
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   gather(ts, count, total_confirmed:total_deaths_per_mil_pop) %>%
-  group_by(region, ts) %>%
+  group_by(province, ts) %>%
   nest()
 
 
 # Modelling with linear model
 df_ts_models<- df_ts_selected %>%
-  mutate(ts_region = str_c(ts, region, sep="_"),
+  mutate(ts_province = str_c(ts, province, sep="_"),
          mdls = map(data, mdl),
          glance = map(mdls, glance),
          tidy = map(mdls, tidy),
@@ -255,13 +255,13 @@ df_ts_models<- df_ts_selected %>%
 df_ts_models %>%
   unnest(c(tidy, conf)) %>%
   filter(ts == "total_confirmed_per_mil_pop",term == "date_observation") %>%
-  select(region, ts, ts_region, estimate, conf.low, conf.high) %>%
-  ggplot(aes(estimate, ts_region, color = ts_region), show.legend = FALSE) +
+  select(province, ts, ts_province, estimate, conf.low, conf.high) %>%
+  ggplot(aes(estimate, ts_province, color = ts_province), show.legend = FALSE) +
   geom_point() +
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
   labs(title = "Model evaluation of confirmed cases",
        subtitle= "COVID-19 affected",
-       x = "Estimated coefficient", y = "region") +
+       x = "Estimated coefficient", y = "province") +
   ggsave(path = "results",
          filename = "model_eval_confirmed.png",
          width = 10,
@@ -272,7 +272,7 @@ df_ts_models %>%
 
 table_df_ts_models_stats<- df_ts_models %>%
   unnest(c(tidy, conf)) %>%
-  select(region, ts, term:p.value) %>%
+  select(province, ts, term:p.value) %>%
   head(10)
 
 linear_models_per_country<- grid.arrange(top="Linear models statistics per country",
@@ -290,32 +290,32 @@ ggsave(path = "results", "table_df_ts_models_stats.png",
 df_ts_models %>%
   unnest(c(tidy, conf)) %>%
   filter(ts == "total_deaths_per_mil_pop", term == "date_observation") %>%
-  select(region, ts, ts_region, estimate,conf.low,conf.high) %>%
-  ggplot(aes(estimate, ts_region, color = ts_region), show.legend = FALSE) +
+  select(province, ts, ts_province, estimate,conf.low,conf.high) %>%
+  ggplot(aes(estimate, ts_province, color = ts_province), show.legend = FALSE) +
   geom_point() +
   geom_errorbarh(aes(xmin= conf.low, xmax = conf.high)) +
   labs(title = "Model evaluation of death cases",
        subtitle= "COVID-19 affected",
-       x = "Estimated coefficient", y = "region") +
+       x = "Estimated coefficient", y = "province") +
   ggsave(path = "results",
          filename = "model_eval_death.png",
          width = 10,
          height = 5)
 
 
-##### Evaluation of the models based on the residuals per region
+##### Evaluation of the models based on the residuals per province
 
 df_ts_models %>%
   unnest(aug) %>%
-  select(region, ts, count,.resid) %>%
+  select(province, ts, count,.resid) %>%
   filter(ts %in% c("total_confirmed_per_mil_pop", "total_deaths_per_mil_pop")) %>%
   ggplot() +
-  geom_boxplot(aes(region,.resid, fill = region)) +
+  geom_boxplot(aes(province,.resid, fill = province)) +
   facet_grid(.~ts) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(title = "Model evaluation (residuals)",
        subtitle= "COVID-19",
-       x = "region", y = "Residuals") +
+       x = "province", y = "Residuals") +
   ggsave(path = "results",
          filename = "model_eval_residuals.png",
          width = 6,
