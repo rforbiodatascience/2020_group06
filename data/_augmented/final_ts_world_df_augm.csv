@@ -1,4 +1,4 @@
-province,date_observation,total_confirmed,total_deaths,total_recovered,new_confirmed,new_deaths,new_recovered,active_cases,closed_cases,total_population,total_confirmed_per_mil_pop,total_deaths_per_mil_pop,days_since_first
+region,date_observation,total_confirmed,total_deaths,total_recovered,new_confirmed,new_deaths,new_recovered,active_cases,closed_cases,total_population,total_confirmed_per_mil_pop,total_deaths_per_mil_pop,days_since_first
 Afghanistan,2020-01-22,0,0,0,0,0,0,0,0,38041757,0,0,-33
 Afghanistan,2020-01-23,0,0,0,0,0,0,0,0,38041757,0,0,-32
 Afghanistan,2020-01-24,0,0,0,0,0,0,0,0,38041757,0,0,-31
