@@ -13,11 +13,11 @@ Our project is based on the analysis of a data set containing daily numbers of c
 
 ## Data
 
-The data was obtained from Kaggle:
+The raw data was obtained from Kaggle:
 
 https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
 
-And augmented withworld population data from the UN:
+and augmented with world population data from the UN:
 
 https://population.un.org/wpp/Download/Standard/CSV/
 
