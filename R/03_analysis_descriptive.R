@@ -204,12 +204,22 @@ df_ts %>%
          height = 5)
 
 
+<<<<<<< HEAD
+# Model data: Time Series
+# ------------------------------------------------------------------------------
+
+# Selecting few countries and nesting per province and time series type
+df_ts_selected<- df_ts %>%
+  filter(province %in% c("Denmark", "Sweden", "Romania",
+                         "Turkey","Philippines")) %>%
+=======
 # Model data: Time Series ------------------------------------------------------
 # Selecting few countries and nesting per region and time series type
 df_ts_selected <-
   df_ts %>%
   filter(region %in% c("Denmark", "Sweden", "Romania",
                        "Turkey","Philippines")) %>%
+>>>>>>> 6dbff6f7b2b1586ca2f5b0a04c557dab00bafa21
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   gather(ts, count, total_confirmed:total_deaths_per_mil_pop) %>%
   group_by(region, ts) %>%
@@ -409,5 +419,20 @@ ggsave(path = "results",
 
 
 # Calculating accuracy
+<<<<<<< HEAD
+dec_tree_model_acc <- round(sum(diag(table_cm)) / sum(table_cm),3)
+
+
+# Write data
+# ------------------------------------------------------------------------------
+
+#write_tsv(...)
+# ggsave(path = "./results",
+#        filename = "04_plot.png",
+#        plot = bl62_pca_aug_plt,
+#        width = 10,
+#        height = 6)
+=======
 dec_tree_model_acc <-
   round(sum(diag(table_cm)) / sum(table_cm),3)
+>>>>>>> 6dbff6f7b2b1586ca2f5b0a04c557dab00bafa21

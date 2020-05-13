@@ -26,7 +26,7 @@ Please note that infection spreading information and data regarding COVID19 is b
 
 
 ## Methodology
-### Data Import & Wrangling
+### Data Import
 
 * This modified version of the JHU dataset initially contained 9 "untidy" dataframes:
   * `covid_19_data.csv`: daily information on confirmed, recovered and deceased patients
@@ -41,7 +41,7 @@ Please note that infection spreading information and data regarding COVID19 is b
   
   
 ## Methodology
-### Data Import & Wrangling
+### Data Wrangling
 
 * All these dataframes were very dirty
   * Different number and type of attributes
@@ -53,7 +53,7 @@ Please note that infection spreading information and data regarding COVID19 is b
   
   
 ## Methodology
-### Data Import & Wrangling
+### Data Wrangling
 
 Heavy data wrangling & tidying procedures were necessary, in order to achieve consistency across the different datasets:
 
@@ -67,18 +67,33 @@ Heavy data wrangling & tidying procedures were necessary, in order to achieve co
 * ___Tidying time-series dataset into long format (date column)___
 * ___Tidying patient data into wide format (symptoms column)___
   
+  
 ## Methodology
-### Data Import & Wrangling
-<br>
-
 ### _How did we achieve data wrangling?_
 * Very heavy use of `stringr` and __`regexp (regular expressions)`__
 * `dplyr` to the rescue - filtering, mutating, grouping, summarizing
 * `tidyr` for reshaping tibbles into __wide/long format__
 * `lubridate` for __dates conversion__
+* `readr` for reading and saving CSV files easily
 * Achieved a consistent andn easy-to-understand workflow through _piping_ (`%>%`)
 
-## Methodology
-### Data Import & Wrangling
 
-Heavy data wrangling & tidying procedures were necessary, in order to achieve consistency across the different datasets:
+## Methodology
+### Data Augmentation
+
+After cleaning the data, we augmented it by manipulating it to create new, useful columns:
+
+* ___Created categorical age groups for patients___
+* ___Joined together the two patient dataframes into one___
+* ___Joined together the three time-series world dataframes (confirmed, recovered,deaths) into one___
+* ___Augmented the Time-Series data with total population numbers___
+  * ___Computed proportion of population infected per 1 million inhabitants___
+  * ___Computed daily new infections, recovered and deaths from the time-series data___
+  
+  
+## Methodology
+### _How did we achieve data augmentation?_
+* Heavy use of `dplyr` for joining dataframes, mutating and filtering
+* `tidyr` for reshaping tibbles into __wide/long format__
+* `forcats` for ordering categorical variables
+* `readr` for reading and saving CSV files easily
