@@ -9,6 +9,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library("imager")
+library("cowplot")
+library("magick")
+library("tidyverse")
 ```
 
 ## Introduction
@@ -39,10 +43,10 @@ Please note that infection spreading information and data regarding COVID19 is b
 ## Introduction
 
 ```{r echo=FALSE}
-library("tidyverse")
+#library("tidyverse")
 
-df_patient <- read_csv(file = "C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_patient_data_df_augm.csv")
-df_ts <- read_csv(file = "C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_ts_world_df_augm.csv")
+#df_patient <- read_csv(file = "C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_patient_data_df_augm.csv")
+#df_ts <- read_csv(file = "C:/Users/XPS/Documents/Jupyter Notebook Files/22100 - R for Bio Data Science/Project - Files/2020_group06/data/_augmented/final_ts_world_df_augm.csv")
 ```
 
 ```{r}
@@ -95,8 +99,14 @@ Data Wrangling:
 
 ## Slide with R Output
 
-```{r cars, echo = TRUE}
-summary(cars)
+```{r}
+
+myimg <- load.image("../results/heatmap_confirmed.png")
+
+ggdraw() +
+  draw_image(myimg)
+
+
 ```
 
 ## Slide with Plot
