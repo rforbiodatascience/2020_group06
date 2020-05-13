@@ -7,29 +7,37 @@ output: ioslides_presentation
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Modelling the COVID-19 pandemic: SIR modelling
+## Modelling the COVID-19 pandemic: SIR
 
-image + equations
-
+```{r,  out.width =  "800px", fig.align = 'center'}
+knitr::include_graphics("../img/SIR.png")
+```
 $$\frac{dS}{dt} = \beta\cdot S\cdot I $$
 $$\frac{dI}{dt} = \beta\cdot S\cdot I - \gamma\cdot I $$
 $$\frac{dR}{dt} = \gamma*I $$
 
-## Slide with Bullets
+## Observed cases in Denmark
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
 
-## Slide with R Output
+## Fitting beta and gamma to the data
+How to find the optimal values of $\beta$ and $\gamma$?
 
-```{r cars, echo = TRUE}
-summary(cars)
+One answer: Minimize the residual square error (RSS) between the observed number of infections and the predicted.
+
+For this, we need:
+
+- A way to solve the ODEs: function ode() from R package deSolve
+- An optimizer: built-in R function optimize()
+
+## Resulting parameters: Sweden
+
+Optimized values were found to $\beta = 0.56$ and $\gamma = 0.44$
+
+giving a reproductive rate of $R_0 = 1.25$
+
+```{r,  out.width =  "400px", fig.align = 'center'}
+knitr::include_graphics("../results/04_sweden_obs_vs_fit.png")
 ```
 
-## Slide with Plot
-
-```{r pressure}
-plot(pressure)
-```
+## 
 
