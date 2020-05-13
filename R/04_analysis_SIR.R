@@ -29,8 +29,10 @@ p_scandinavia_obs <-
                        y = total_confirmed,
                        group = region,
                        color = region)) +
-  xlab("Days since first infection") +
-  ylab("Total infections (cumulative)") +
+  labs(title = "COVID-19 in Scandinavia",
+       subtitle = "Infections by country",
+       x = "Days since first infection", y = "Total infections (cumulative)",
+       color = "Cases") +
   geom_point() +
   xlim(c(0,100))
 
@@ -51,7 +53,6 @@ df_SIR_long <-
                names_to = "variable",
                values_to = "value")
 
-
 p_denmark_obs <-
   ggplot(data = df_SIR_long %>% filter(region == "Denmark"),
          mapping = aes(x = date_observation,
@@ -59,7 +60,7 @@ p_denmark_obs <-
                        group = variable,
                        color = variable)) +
   labs(title = "COVID-19 in Denmark",
-       subtitle = "Infected and recovered patients",
+       subtitle = "Infected and recovered pateients",
        x = "Date", y = "Number of cases", color = "Cases") +
   scale_color_manual(labels = c("Infected", "Recovered"),
                      values = c("#F8766D", "#619CFF")) +
