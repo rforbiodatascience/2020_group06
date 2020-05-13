@@ -39,6 +39,40 @@ Please note that infection spreading information and data regarding COVID19 is b
   * `time_series_covid_19_recovered.csv`: daily number of recovered cases around the world
   * `wpp2019_total_population.csv`: data downloaded from <https://population.un.org/wpp/Download/Standard/CSV/> which has the total population of a country in 2019
   
+  
 ## Methodology
 ### Data Import & Wrangling
 
+* All these dataframes were very dirty
+  * Different number and type of attributes
+  * Different formats for storing country & provinces
+  * Different methodology of collecting time-series data
+  * Empty and extremely sparse columns
+  * Conceptual string duplicates (e.g. _runny nose_ and _nasal discharge_ )
+  * ... and more
+  
+  
+## Methodology
+### Data Import & Wrangling
+
+Heavy data wrangling & tidying procedures were necessary, in order to achieve consistency across the different datasets:
+
+* ___Column renaming to a common scheme___
+* ___Remove data inconsistencies in province and country strings___
+* ___Transformation of missing values to a common format___
+* ___Empty and unnecessary column removal___
+* ___Replace conceptual duplicates in the patient symptom data___
+* ___Fixing erroneous age values___
+* ___Date conversion into a unitary format___
+* ___Tidying time-series dataset into long format (date column)___
+* ___Tidying patient data into wide format (symptoms column)___
+  
+## Methodology
+### Data Import & Wrangling
+<br>
+
+### _How did we achieve data wrangling?_
+* Very heavy use of `stringr` and __`regexp (regular expressions)`__
+* `dplyr` to the rescue - filtering, mutating, grouping, summarizing
+* `lubridate` for dates conversion
+* Achieved a consistent andn easy-to-understand workflow through _piping_ (`%>%`)
