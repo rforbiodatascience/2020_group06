@@ -104,7 +104,6 @@ ggdraw() +
   draw_image(heatmap_confirmed, scale = 1,
   clip = "on")
 
-
 ```
 
 
@@ -429,8 +428,6 @@ ggdraw() +
   clip = "on")
 
 ```
-
-
 
 
 # Summary
