@@ -16,8 +16,15 @@ $$\frac{dS}{dt} = \beta\cdot S\cdot I $$
 $$\frac{dI}{dt} = \beta\cdot S\cdot I - \gamma\cdot I $$
 $$\frac{dR}{dt} = \gamma*I $$
 
-## Observed cases in Denmark
+## Observed cases and recoveries in Denmark
+```{r,  out.width =  "700", fig.align = 'center'}
+knitr::include_graphics("../results/04_Denmark_obs.png")
+```
 
+## Observed cases in Scandinavia
+```{r,  out.width =  "580px", fig.align = 'center'}
+knitr::include_graphics("../results/04_scandinavia_obs.png")
+```
 
 ## Fitting beta and gamma to the data
 How to find the optimal values of $\beta$ and $\gamma$?
@@ -35,9 +42,13 @@ Optimized values were found to $\beta = 0.56$ and $\gamma = 0.44$
 
 giving a reproductive rate of $R_0 = 1.25$
 
-```{r,  out.width =  "400px", fig.align = 'center'}
+```{r,  out.width =  "580px", fig.align = 'center'}
 knitr::include_graphics("../results/04_sweden_obs_vs_fit.png")
 ```
 
-## 
+## Making predictions
+
+```{r,  out.width =  "700", fig.align = 'center'}
+knitr::include_graphics("../results/04_sweden_pred.png")
+```
 

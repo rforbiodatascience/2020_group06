@@ -37,7 +37,7 @@ p_scandinavia_obs <-
 ggsave(path = "results",
        filename = "04_scandinavia_obs.png",
        plot = p_scandinavia_obs,
-       width = 5,
+       width = 6,
        height = 4)
 
 
@@ -59,7 +59,7 @@ p_denmark_obs <-
                        group = variable,
                        color = variable)) +
   labs(title = "COVID-19 in Denmark",
-       subtitle = "Infected and recovered pateients",
+       subtitle = "Infected and recovered patients",
        x = "Date", y = "Number of cases", color = "Cases") +
   scale_color_manual(labels = c("Infected", "Recovered"),
                      values = c("#F8766D", "#619CFF")) +
@@ -69,7 +69,7 @@ p_denmark_obs <-
 ggsave(path = "results",
        filename = "04_denmark_obs.png",
        plot = p_denmark_obs,
-       width = 5,
+       width = 6,
        height = 4)
 
 
@@ -192,7 +192,7 @@ p_sweden_obs_fit <-
 ggsave(path = "results",
        "04_sweden_obs_vs_fit.png",
        p_sweden_obs_fit,
-       width = 5,
+       width = 6,
        height = 4
        )
 
@@ -218,6 +218,6 @@ p_sweden_pred <-
 ggsave(path = "results",
        "04_sweden_pred.png",
        p_sweden_pred,
-       width = 5,
+       width = 6,
        height = 4
 )
