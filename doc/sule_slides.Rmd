@@ -22,7 +22,7 @@ knitr::include_graphics("../results/04_Denmark_obs.png")
 ```
 
 ## Observed cases in Scandinavia
-```{r,  out.width =  "580px", fig.align = 'center'}
+```{r,  out.width =  "700px", fig.align = 'center'}
 knitr::include_graphics("../results/04_scandinavia_obs.png")
 ```
 
