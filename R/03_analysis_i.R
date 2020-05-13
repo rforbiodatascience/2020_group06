@@ -45,7 +45,7 @@ df_patient %>%
   labs(title = "Distribution of age group by gender",
        subtitle= "COVID-19 affected", x = "Age group", y = "Count") +
   ggsave(path = "results",
-         filename = "Distribution_age_group_gender.png",
+         filename = "distribution_age_group_gender.png",
          width = 6,
          height = 5)
 
@@ -66,7 +66,7 @@ df_patient %>%
        subtitle= "COVID-19 affected", x = "Age",
        y = "Day(s)") +
   ggsave(path = "results",
-         filename = "Onset_to_admission.png",
+         filename = "onset_to_admission.png",
          plot = last_plot(),
          width = 6,
          height = 5)
@@ -86,7 +86,7 @@ df_patient %>%
        subtitle= "COVID-19 affected", x = "Dyspnea", y = "Age")
 
 ggsave(path = "results",
-       filename = "Age_symptoms_death_wuhan.png",
+       filename = "age_symptoms_death_wuhan.png",
        plot = last_plot(),
        width = 6,
        height = 5)
@@ -106,7 +106,7 @@ df_patient %>%
   labs(title = "Numbers of cases (above 100) between Jan-feb 2020",
        subtitle= "COVID-19 affected", x = "", y = "Count") +
   ggsave(path = "results",
-         filename = "Cases_above_hundred.png",
+         filename = "cases_above_hundred.png",
          width = 6,
          height = 5)
 
@@ -125,7 +125,7 @@ df_patient %>%
        subtitle= "Observed in more than 10 cases",
        x = "Symptoms", y = "Count") +
   ggsave(path = "results",
-         filename = "Prevalence_symptoms.png",
+         filename = "prevalence_symptoms.png",
          plot = last_plot(),
          width = 6,
          height = 5)
@@ -177,7 +177,7 @@ p2<- df_ts %>%
 ##### Plotting both of the total death
 ggarrange(p1, p2, ncol=1, nrow=2, align = "v") %>%
   ggsave(path = "results",
-         filename = "cofirmed_death_per_mil_pop.png",
+         filename = "confirmed_death_per_mil_pop.png",
          width = 6,
          height = 5)
 
@@ -203,7 +203,7 @@ df_ts %>%
        subtitle= "COVID-19 affected",
        x = "Date", y = "Count per million population") +
   ggsave(path = "results",
-         filename = "Confirmed_per_mill.png",
+         filename = "confirmed_per_mill.png",
          width = 6,
          height = 5)
 
