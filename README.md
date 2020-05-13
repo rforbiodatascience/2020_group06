@@ -1,9 +1,8 @@
 # 2020_group06: COVID-19 analysis and modelling
 
----
+## Sule Altintas, Sebastian Sbirna and Stanley Frederiksen
 
-## Sule Altintas, Sebastian Sbirna & Stanley Frederiksen <br>
-### 14th of May 2020
+![](./img/project_flowchart.png)
 
 ## Description
 
@@ -20,6 +19,23 @@ https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
 and augmented with world population data from the UN:
 
 https://population.un.org/wpp/Download/Standard/CSV/
+
+## Dependencies
+The following dependencies are necessary to run our project:
+- [R](https://cran.r-project.org/bin/windows/base/) >= 4.0.0, and the following additional packages:
+  * __tidyverse__
+  * __lubridate__
+  * __broom__
+  * __leaflet__
+  * __leaflet.extras__
+  * __ggpubr__
+  * __rpart__
+  * __rpart.plot__
+  * __factoextra__
+  * __caret__
+  * __gridExtra__
+  * __deSolve__
+  * __shiny__ (_only needed to run our corresponding Shiny app locally_)
 
 ## Usage
 By running the script R/00_do.R, the full data analysis can be carried out. This is especially useful if updating the data in data/_raw with the new daily numbers, as new data will be incorporated into all resulting plots.
