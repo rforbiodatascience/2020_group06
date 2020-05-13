@@ -1,10 +1,8 @@
-# Clear workspace
-# ------------------------------------------------------------------------------
+# Clear workspace --------------------------------------------------------------
 rm(list = ls())
 
 
-# Load libraries
-# ------------------------------------------------------------------------------
+# Load libraries ---------------------------------------------------------------
 library("tidyverse")
 library("leaflet")
 library("leaflet.extras")
@@ -17,23 +15,22 @@ library("factoextra")
 library("caret")
 library("gridExtra")
 
-# Define functions
-# ------------------------------------------------------------------------------
+# Define functions -------------------------------------------------------------
 source(file = "R/99_func.R")
 
 
-# Load data
-# ------------------------------------------------------------------------------
-df_patient <- read_csv(file = "data/_augmented/final_patient_data_df_augm.csv")
-df_ts <- read_csv(file = "data/_augmented/final_ts_world_df_augm.csv")
+# Load data --------------------------------------------------------------------
+df_patient <-
+  read_csv(file = "data/_augmented/final_patient_data_df_augm.csv",
+           col_types = cols())
+
+df_ts <-
+  read_csv(file = "data/_augmented/final_ts_world_df_augm.csv",
+           col_types = cols())
 
 
-# Basic descriptive and visualization: Patient data
-# ------------------------------------------------------------------------------
-
-
-### Distribution of age group by gender
-
+# Basic descriptive and visualization: Patient data ----------------------------
+# Plot 1: Distribution of age group by gender ----------------------------------
 df_patient %>%
   group_by(age_group, gender) %>%
   tally() %>%
@@ -45,13 +42,12 @@ df_patient %>%
   labs(title = "Distribution of age group by gender",
        subtitle= "COVID-19 affected", x = "Age group", y = "Count") +
   ggsave(path = "results",
-         filename = "distribution_age_group_gender.png",
+         filename = "03_distribution_age_group_gender.png",
          width = 6,
          height = 5)
 
 
-### Smoothing of time 2 admin as a function of age, grouped by gender and dead
-
+# Plot 2: Smoothing of time_2_admin ~ age, grouped by gender and dead ----------
 df_patient %>%
   mutate(time2admis = as.integer(date_admission_hospital - date_onset)) %>%
   select(gender, age, time2admis, is_dead, contact_with_Wuhan) %>%
@@ -66,15 +62,13 @@ df_patient %>%
        subtitle= "COVID-19 affected", x = "Age",
        y = "Day(s)") +
   ggsave(path = "results",
-         filename = "onset_to_admission.png",
+         filename = "03_onset_to_admission.png",
          plot = last_plot(),
          width = 6,
          height = 5)
 
 
-
-### Boxplot of age range, by is_dead, contact with wuhan and had a dyspnea
-
+# Plot 3: Boxplot of age range ~ is_dead, contact_with_wuhan and dyspnea -------
 df_patient %>%
   select(gender, age, dyspnea, is_dead, contact_with_Wuhan) %>%
   drop_na(gender, age, dyspnea, is_dead, contact_with_Wuhan) %>%
@@ -83,18 +77,15 @@ df_patient %>%
   facet_grid(contact_with_Wuhan~is_dead,
              labeller = label_both, scales = "free") +
   labs(title = "Age distribution by symptoms, death and contact with wuhan",
-       subtitle= "COVID-19 affected", x = "Dyspnea", y = "Age")
-
-ggsave(path = "results",
-       filename = "age_symptoms_death_wuhan.png",
-       plot = last_plot(),
-       width = 6,
-       height = 5)
-
+       subtitle= "COVID-19 affected", x = "Dyspnea", y = "Age") +
+  ggsave(path = "results",
+         filename = "03_age_symptoms_death_wuhan.png",
+         plot = last_plot(),
+         width = 6,
+         height = 5)
 
 
-### Barplot in polar coordinates of incidents pr. province above 100
-
+# Plot 4: Barplot in polar coordinates of incidents per region above 100 -------
 df_patient %>%
   group_by(country) %>%
   tally() %>%
@@ -106,12 +97,12 @@ df_patient %>%
   labs(title = "Numbers of cases (above 100) between Jan-feb 2020",
        subtitle= "COVID-19 affected", x = "", y = "Count") +
   ggsave(path = "results",
-         filename = "cases_above_hundred.png",
+         filename = "03_cases_above_hundred.png",
          width = 6,
          height = 5)
 
-### Barplot of the symptoms (only when counts > 10 for visualization purposes)
 
+# Plot 5: Barplot of the symptoms (when counts > 10 for visual purposes) -------
 df_patient %>%
   select(chills:thirst) %>%
   summarise_if(is.numeric,sum,na.rm=TRUE) %>%
@@ -125,14 +116,13 @@ df_patient %>%
        subtitle= "Observed in more than 10 cases",
        x = "Symptoms", y = "Count") +
   ggsave(path = "results",
-         filename = "prevalence_symptoms.png",
+         filename = "03_prevalence_symptoms.png",
          plot = last_plot(),
          width = 6,
          height = 5)
 
 
-### Heatmap of cases
-
+# Plot 6: Heatmap of cases -----------------------------------------------------
 df_patient %>%
   drop_na(lat,long) %>%
   leaflet() %>%
@@ -151,79 +141,70 @@ df_patient %>%
 # tried other packages but did not work
 
 
+# Visualization: Time Series Data ----------------------------------------------
+# Plot 7: Comparison of Denmark and Sweden -------------------------------------
 
-# Visualization: Time Series
-# ------------------------------------------------------------------------------
-
-
-########## Comparison of Denmark and Sweden ##########
-
-
-##### Comparing total confirmed per mill. population
-p1<- df_ts %>%
-  filter(province %in% c("Denmark","Sweden")) %>%
+# Comparing total confirmed per mill. population
+p1 <-
+  df_ts %>%
+  filter(region %in% c("Denmark","Sweden")) %>%
   ggplot() +
-  geom_line(aes(date_observation,total_confirmed_per_mil_pop ,color = province)) +
+  geom_line(aes(date_observation, total_confirmed_per_mil_pop,
+                color = region)) +
   labs(title = "Confirmed and Death per mill population")
 
 
-##### Comparing total deaths per mill. population
-p2<- df_ts %>%
-  filter(province %in% c("Denmark","Sweden")) %>%
+# Comparing total deaths per mill. population
+p2 <-
+  df_ts %>%
+  filter(region %in% c("Denmark","Sweden")) %>%
   ggplot() +
-  geom_line(aes(date_observation,total_deaths_per_mil_pop,color = province))
+  geom_line(aes(date_observation,total_deaths_per_mil_pop,color = region))
 
 
-##### Plotting both of the total death
+# Plotting both of the total death
 ggarrange(p1, p2, ncol=1, nrow=2, align = "v") %>%
   ggsave(path = "results",
-         filename = "confirmed_death_per_mil_pop.png",
+         filename = "03_confirmed_death_per_mil_pop.png",
          width = 6,
          height = 5)
 
 
-
-
-###############################################################################
-###### FROM HERE - ONLY FROM 2020-03-11 ARE SHOWN (DATE OF DK LOCKDOWN) #######
-###############################################################################
-
-
-# Comparing Denmark, Sweden, Romania, Turkey
-# and Philippines per mill. population
-
+# FROM HERE - ONLY FROM 2020-03-11 ARE SHOWN (DATE OF DK LOCKDOWN)
+# Plot 8: Compare Denmark, Sweden, Romania, Turkey, Philippines per mil.pop ----
 df_ts %>%
-  filter(province %in% c("Denmark", "Sweden", "Romania",
-                         "Turkey", "Philippines")) %>%
+  filter(region %in% c("Denmark", "Sweden", "Romania",
+                       "Turkey", "Philippines")) %>%
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   ggplot() +
   geom_line(aes(date_observation, total_confirmed_per_mil_pop,
-                color = province)) +
+                color = region)) +
   labs(title = "Confirmed case(s) per million population",
        subtitle= "COVID-19 affected",
        x = "Date", y = "Count per million population") +
   ggsave(path = "results",
-         filename = "confirmed_per_mill.png",
+         filename = "03_confirmed_per_mill.png",
          width = 6,
          height = 5)
 
-### Total deaths per mil pop
 
+# Plot 9: Total deaths per mil.pop for the above-mentioned countries -----------
 df_ts %>%
-  filter(province %in% c("Denmark", "Sweden", "Romania",
-                         "Turkey", "Philippines")) %>%
+  filter(region %in% c("Denmark", "Sweden", "Romania",
+                       "Turkey", "Philippines")) %>%
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   ggplot() +
-  geom_line(aes(date_observation, total_deaths_per_mil_pop, color = province)) +
+  geom_line(aes(date_observation, total_deaths_per_mil_pop, color = region)) +
   labs(title = "Death(s) per million population",
        subtitle= "COVID-19 affected",
        x = "Date", y = "Count per million population") +
   ggsave(path = "results",
-         filename = "deaths_per_mill.png",
+         filename = "03_deaths_per_mill.png",
          width = 6,
          height = 5)
 
 
+<<<<<<< HEAD
 # Model data: Time Series
 # ------------------------------------------------------------------------------
 
@@ -231,15 +212,24 @@ df_ts %>%
 df_ts_selected<- df_ts %>%
   filter(province %in% c("Denmark", "Sweden", "Romania",
                          "Turkey","Philippines")) %>%
+=======
+# Model data: Time Series ------------------------------------------------------
+# Selecting few countries and nesting per region and time series type
+df_ts_selected <-
+  df_ts %>%
+  filter(region %in% c("Denmark", "Sweden", "Romania",
+                       "Turkey","Philippines")) %>%
+>>>>>>> 6dbff6f7b2b1586ca2f5b0a04c557dab00bafa21
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   gather(ts, count, total_confirmed:total_deaths_per_mil_pop) %>%
-  group_by(province, ts) %>%
+  group_by(region, ts) %>%
   nest()
 
 
-# Modelling with linear model
-df_ts_models<- df_ts_selected %>%
-  mutate(ts_province = str_c(ts, province, sep="_"),
+# Modeling with linear model
+df_ts_models <-
+  df_ts_selected %>%
+  mutate(ts_region = str_c(ts, region, sep="_"),
          mdls = map(data, mdl),
          glance = map(mdls, glance),
          tidy = map(mdls, tidy),
@@ -247,96 +237,93 @@ df_ts_models<- df_ts_selected %>%
          aug = map(mdls, augment))
 
 
-########## Estimate pr. day of confirmed and death per mil pop ##########
-
-
-##### Showing model estimate (coefficient) confirmed per mil pop
-
+# Plot 10: Estimate pr. day of confirmed and death per mil pop -----------------
+# Showing model estimate (coefficient) confirmed per mil pop
 df_ts_models %>%
   unnest(c(tidy, conf)) %>%
   filter(ts == "total_confirmed_per_mil_pop",term == "date_observation") %>%
-  select(province, ts, ts_province, estimate, conf.low, conf.high) %>%
-  ggplot(aes(estimate, ts_province, color = ts_province), show.legend = FALSE) +
+  select(region, ts, ts_region, estimate, conf.low, conf.high) %>%
+  ggplot(aes(estimate, ts_region, color = ts_region), show.legend = FALSE) +
   geom_point() +
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
   labs(title = "Model evaluation of confirmed cases",
        subtitle= "COVID-19 affected",
-       x = "Estimated coefficient", y = "province") +
+       x = "Estimated coefficient", y = "region") +
   ggsave(path = "results",
-         filename = "model_eval_confirmed.png",
+         filename = "03_model_eval_confirmed.png",
          width = 10,
          height = 5)
 
 
-##### Showing model estimate (coefficient) confirmed per mil pop
-
-table_df_ts_models_stats<- df_ts_models %>%
+# Plot 11: Showing model estimate (coefficient) confirmed per mil pop ----------
+table_df_ts_models_stats <-
+  df_ts_models %>%
   unnest(c(tidy, conf)) %>%
-  select(province, ts, term:p.value) %>%
+  select(region, ts, term:p.value) %>%
   head(10)
 
-linear_models_per_country<- grid.arrange(top="Linear models statistics per country",
-                                         tableGrob(table_df_ts_models_stats))
+linear_models_per_country <-
+  grid.arrange(top = "Linear models statistics per country",
+               tableGrob(table_df_ts_models_stats))
 
-ggsave(path = "results", "table_df_ts_models_stats.png",
+ggsave(path = "results",
+       filename = "03_table_df_ts_models_stats.png",
        plot = linear_models_per_country,
        width = 10,
        height = 5)
 
 
 
-##### Showing model estimate (coefficient) deaths per mil pop
-
+# Plot 12: Showing model estimate (coefficient) deaths per mil pop -------------
 df_ts_models %>%
   unnest(c(tidy, conf)) %>%
   filter(ts == "total_deaths_per_mil_pop", term == "date_observation") %>%
-  select(province, ts, ts_province, estimate,conf.low,conf.high) %>%
-  ggplot(aes(estimate, ts_province, color = ts_province), show.legend = FALSE) +
+  select(region, ts, ts_region, estimate,conf.low,conf.high) %>%
+  ggplot(aes(estimate, ts_region, color = ts_region), show.legend = FALSE) +
   geom_point() +
   geom_errorbarh(aes(xmin= conf.low, xmax = conf.high)) +
   labs(title = "Model evaluation of death cases",
        subtitle= "COVID-19 affected",
-       x = "Estimated coefficient", y = "province") +
+       x = "Estimated coefficient", y = "region") +
   ggsave(path = "results",
-         filename = "model_eval_death.png",
+         filename = "03_model_eval_death.png",
          width = 10,
          height = 5)
 
 
-##### Evaluation of the models based on the residuals per province
-
+# Plot 13: Evaluation of the models based on the residuals per region ----------
 df_ts_models %>%
   unnest(aug) %>%
-  select(province, ts, count,.resid) %>%
-  filter(ts %in% c("total_confirmed_per_mil_pop", "total_deaths_per_mil_pop")) %>%
+  select(region, ts, count,.resid) %>%
+  filter(ts %in% c("total_confirmed_per_mil_pop",
+                   "total_deaths_per_mil_pop")) %>%
   ggplot() +
-  geom_boxplot(aes(province,.resid, fill = province)) +
+  geom_boxplot(aes(region,.resid, fill = region)) +
   facet_grid(.~ts) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(title = "Model evaluation (residuals)",
        subtitle= "COVID-19",
-       x = "province", y = "Residuals") +
+       x = "region", y = "Residuals") +
   ggsave(path = "results",
-         filename = "model_eval_residuals.png",
+         filename = "03_model_eval_residuals.png",
          width = 6,
          height = 5)
 
 
-# Model data: Patient data
-# ------------------------------------------------------------------------------
+# Model data: Patient data -----------------------------------------------------
 
-### subsetting data frame for the pca (only biological features)
-
-df_patient_pca<- df_patient %>%
-  select(gender,age, contact_with_Wuhan:is_recovered,chills:thirst) %>%
+# Subsetting data frame for the pca (only biological features)
+df_patient_pca <-
+  df_patient %>%
+  select(gender,age, contact_with_Wuhan:is_recovered, chills:thirst) %>%
   na.omit() %>%
   mutate(gender = case_when(gender == 'female' ~ 1,
                             gender == 'male' ~ 0)) %>%
   select_if(~length(unique(.)) > 1) # removing columns with same value
 
 
-# Making PCA of the subset - Selecting only the binary variables to avoid scale
-
+# Plot 14: Making PCA of the subset --------------------------------------------
+# Selecting only the binary variables to avoid scale
 df_patient_pca %>%
   select(-age) %>%
   prcomp(center = TRUE) %>%
@@ -344,14 +331,14 @@ df_patient_pca %>%
            subtitle = "Explained variance in percentage by dimension",
            xlab = "Dimension", ylab = "Percentage") %>%
   ggsave(path = "results",
-         filename = "pca_biological_features.png",
+         filename = "03_pca_biological_features.png",
          width = 6,
          height = 5)
 
 
-### Creating data frame for decision tree
-
-df_patient_dec<- df_patient %>%
+# Creating data frame for decision tree
+df_patient_dec <-
+  df_patient %>%
   select(gender, age, contact_with_Wuhan:is_recovered,
          chills:thirst) %>%
   select_if(~length(unique(.)) > 1) %>%
@@ -372,58 +359,67 @@ df_patient_dec<- df_patient %>%
 set.seed(22100)
 
 # Making train and test for decision tree
-df_patient_dec_train<- df_patient_dec %>%
+df_patient_dec_train <-
+  df_patient_dec %>%
   sample_frac(0.8)
 
-df_patient_dec_test<- df_patient_dec %>%
+df_patient_dec_test <-
+  df_patient_dec %>%
   anti_join(df_patient_dec_train, by = "patient_id")
 
 
 # Fitting the training data
-df_patient_dec_fit<- df_patient_dec_train %>%
+df_patient_dec_fit <-
+  df_patient_dec_train %>%
   select(-patient_id) %>%
   rpart(status ~ ., ., method = 'class', model = TRUE,
         minsplit = 1, minbucket = 2, cp = 0.004)
 
 
-# Plotting the tree
+# Plot 15: Plotting the tree ---------------------------------------------------
+# Not able to save the image, done manually
 rpart.plot(df_patient_dec_fit, roundint = FALSE, extra = "auto")
 
-# -- Not able to save the image, done manually
 
-
-### Explanation of the tree plot output ###
+# Explanation of the tree plot output
 
 # predicted class
 # predicted prob for each class
 # fraction of observation in the node
 
-
 # Predicting with the model
-df_patient_pred_status<- predict(df_patient_dec_fit, df_patient_dec_test,
-                                 type = 'class')
+df_patient_pred_status <-
+  predict(df_patient_dec_fit, df_patient_dec_test,
+          type = 'class')
 
 
 # Defining the true class and predicted class
-true_class<- df_patient_dec_test %>%
+true_class <-
+  df_patient_dec_test %>%
   select(status) %>%
   as_vector()
 
-pred_class<- as_vector(df_patient_pred_status)
+pred_class <-
+  as_vector(df_patient_pred_status)
 
 
 # Creating confusion matrix
-table_cm <- as.matrix(confusionMatrix(table(true_class, pred_class)))
+table_cm <-
+  as.matrix(confusionMatrix(table(true_class, pred_class)))
 
-table_cm_plot<- grid.arrange(top="Confusion Matrix: Decision tree prediction",
-                             tableGrob(table_cm))
+table_cm_plot <-
+  grid.arrange(top="Confusion Matrix: Decision tree prediction",
+               tableGrob(table_cm))
 
-ggsave(path = "results", "table_cm_plot.png",table_cm_plot,
+ggsave(path = "results",
+       filename = "03_table_cm_plot.png",
+       plot = table_cm_plot,
        width = 5,
        height = 4)
 
 
 # Calculating accuracy
+<<<<<<< HEAD
 dec_tree_model_acc <- round(sum(diag(table_cm)) / sum(table_cm),3)
 
 
@@ -436,3 +432,7 @@ dec_tree_model_acc <- round(sum(diag(table_cm)) / sum(table_cm),3)
 #        plot = bl62_pca_aug_plt,
 #        width = 10,
 #        height = 6)
+=======
+dec_tree_model_acc <-
+  round(sum(diag(table_cm)) / sum(table_cm),3)
+>>>>>>> 6dbff6f7b2b1586ca2f5b0a04c557dab00bafa21
