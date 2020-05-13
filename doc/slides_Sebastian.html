@@ -3141,7 +3141,7 @@ slide:not(.current) .plotly.html-widget{
 
 </article></slide><slide class=""><hgroup><h2>Methodology</h2></hgroup><article  id="methodology" class="smaller ">
 
-<h3>Data Import &amp; Wrangling</h3>
+<h3>Data Import</h3>
 
 <ul>
 <li>This modified version of the JHU dataset initially contained 9 &ldquo;untidy&rdquo; dataframes:
@@ -3161,7 +3161,7 @@ slide:not(.current) .plotly.html-widget{
 
 </article></slide><slide class=""><hgroup><h2>Methodology</h2></hgroup><article  id="methodology-1" class="smaller ">
 
-<h3>Data Import &amp; Wrangling</h3>
+<h3>Data Wrangling</h3>
 
 <ul>
 <li>All these dataframes were very dirty
@@ -3178,7 +3178,7 @@ slide:not(.current) .plotly.html-widget{
 
 </article></slide><slide class=""><hgroup><h2>Methodology</h2></hgroup><article  id="methodology-2" class="smaller ">
 
-<h3>Data Import &amp; Wrangling</h3>
+<h3>Data Wrangling</h3>
 
 <p>Heavy data wrangling &amp; tidying procedures were necessary, in order to achieve consistency across the different datasets:</p>
 
@@ -3196,17 +3196,44 @@ slide:not(.current) .plotly.html-widget{
 
 </article></slide><slide class=""><hgroup><h2>Methodology</h2></hgroup><article  id="methodology-3" class="smaller ">
 
-<h3>Data Import &amp; Wrangling</h3>
-
-<p><br></p>
-
 <h3><em>How did we achieve data wrangling?</em></h3>
 
 <ul>
 <li>Very heavy use of <code>stringr</code> and <strong><code>regexp (regular expressions)</code></strong></li>
 <li><code>dplyr</code> to the rescue - filtering, mutating, grouping, summarizing</li>
-<li><code>lubridate</code> for dates conversion</li>
+<li><code>tidyr</code> for reshaping tibbles into <strong>wide/long format</strong></li>
+<li><code>lubridate</code> for <strong>dates conversion</strong></li>
+<li><code>readr</code> for reading and saving CSV files easily</li>
 <li>Achieved a consistent andn easy-to-understand workflow through <em>piping</em> (<code>%&gt;%</code>)</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Methodology</h2></hgroup><article  id="methodology-4" class="smaller ">
+
+<h3>Data Augmentation</h3>
+
+<p>After cleaning the data, we augmented it by manipulating it to create new, useful columns:</p>
+
+<ul>
+<li><strong><em>Created categorical age groups for patients</em></strong></li>
+<li><strong><em>Joined together the two patient dataframes into one</em></strong></li>
+<li><strong><em>Joined together the three time-series world dataframes (confirmed, recovered,deaths) into one</em></strong></li>
+<li><strong><em>Augmented the Time-Series data with total population numbers</em></strong>
+
+<ul>
+<li><strong><em>Computed proportion of population infected per 1 million inhabitants</em></strong></li>
+<li><strong><em>Computed daily new infections, recovered and deaths from the time-series data</em></strong></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Methodology</h2></hgroup><article  id="methodology-5" class="smaller ">
+
+<h3><em>How did we achieve data augmentation?</em></h3>
+
+<ul>
+<li>Heavy use of <code>dplyr</code> for joining dataframes, mutating and filtering</li>
+<li><code>tidyr</code> for reshaping tibbles into <strong>wide/long format</strong></li>
+<li><code>forcats</code> for ordering categorical variables</li>
+<li><code>readr</code> for reading and saving CSV files easily</li>
 </ul></article></slide>
 
 
