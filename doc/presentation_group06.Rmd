@@ -364,21 +364,6 @@ ggdraw() +
 ```
 
 
-## Total confirmed and death cases per million population, DK vs. SE
-
-- There is a higher tendency to die if you are from Sweden
-
-```{r fig.align="center"}
-
-confirmed_death_per_mil_pop <- load.image("../results/03_confirmed_death_per_mil_pop.png")
-
-ggdraw() +
-  draw_image(confirmed_death_per_mil_pop, scale = 1,
-  clip = "on")
-
-```
-
-
 # Linear Models
 
 ## Linear regression model of the 5 countries (confirmed cases)

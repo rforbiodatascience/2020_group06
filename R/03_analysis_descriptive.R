@@ -142,36 +142,10 @@ df_patient %>%
 
 
 # Visualization: Time Series Data ----------------------------------------------
-# Plot 7: Comparison of Denmark and Sweden -------------------------------------
-
-# Comparing total confirmed per mill. population
-p1 <-
-  df_ts %>%
-  filter(region %in% c("Denmark","Sweden")) %>%
-  ggplot() +
-  geom_line(aes(date_observation, total_confirmed_per_mil_pop,
-                color = region)) +
-  labs(title = "Confirmed and Death per mill population")
-
-
-# Comparing total deaths per mill. population
-p2 <-
-  df_ts %>%
-  filter(region %in% c("Denmark","Sweden")) %>%
-  ggplot() +
-  geom_line(aes(date_observation,total_deaths_per_mil_pop,color = region))
-
-
-# Plotting both of the total death
-ggarrange(p1, p2, ncol=1, nrow=2, align = "v") %>%
-  ggsave(path = "results",
-         filename = "03_confirmed_death_per_mil_pop.png",
-         width = 6,
-         height = 5)
 
 
 # FROM HERE - ONLY FROM 2020-03-11 ARE SHOWN (DATE OF DK LOCKDOWN)
-# Plot 8: Compare Denmark, Sweden, Romania, Turkey, Philippines per mil.pop ----
+# Plot 7: Compare Denmark, Sweden, Romania, Turkey, Philippines per mil.pop ----
 df_ts %>%
   filter(region %in% c("Denmark", "Sweden", "Romania",
                        "Turkey", "Philippines")) %>%
@@ -188,7 +162,7 @@ df_ts %>%
          height = 5)
 
 
-# Plot 9: Total deaths per mil.pop for the above-mentioned countries -----------
+# Plot 8: Total deaths per mil.pop for the above-mentioned countries -----------
 df_ts %>%
   filter(region %in% c("Denmark", "Sweden", "Romania",
                        "Turkey", "Philippines")) %>%
@@ -204,22 +178,21 @@ df_ts %>%
          height = 5)
 
 
-<<<<<<< HEAD
+
 # Model data: Time Series
 # ------------------------------------------------------------------------------
 
 # Selecting few countries and nesting per province and time series type
 df_ts_selected<- df_ts %>%
-  filter(province %in% c("Denmark", "Sweden", "Romania",
-                         "Turkey","Philippines")) %>%
-=======
+  filter(region %in% c("Denmark", "Sweden", "Romania",
+                         "Turkey","Philippines"))
+
 # Model data: Time Series ------------------------------------------------------
 # Selecting few countries and nesting per region and time series type
 df_ts_selected <-
   df_ts %>%
   filter(region %in% c("Denmark", "Sweden", "Romania",
                        "Turkey","Philippines")) %>%
->>>>>>> 6dbff6f7b2b1586ca2f5b0a04c557dab00bafa21
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   gather(ts, count, total_confirmed:total_deaths_per_mil_pop) %>%
   group_by(region, ts) %>%
@@ -237,7 +210,7 @@ df_ts_models <-
          aug = map(mdls, augment))
 
 
-# Plot 10: Estimate pr. day of confirmed and death per mil pop -----------------
+# Plot 9: Estimate pr. day of confirmed and death per mil pop -----------------
 # Showing model estimate (coefficient) confirmed per mil pop
 df_ts_models %>%
   unnest(c(tidy, conf)) %>%
@@ -255,7 +228,7 @@ df_ts_models %>%
          height = 5)
 
 
-# Plot 11: Showing model estimate (coefficient) confirmed per mil pop ----------
+# Plot 10: Showing model estimate (coefficient) confirmed per mil pop ----------
 table_df_ts_models_stats <-
   df_ts_models %>%
   unnest(c(tidy, conf)) %>%
@@ -274,7 +247,7 @@ ggsave(path = "results",
 
 
 
-# Plot 12: Showing model estimate (coefficient) deaths per mil pop -------------
+# Plot 11: Showing model estimate (coefficient) deaths per mil pop -------------
 df_ts_models %>%
   unnest(c(tidy, conf)) %>%
   filter(ts == "total_deaths_per_mil_pop", term == "date_observation") %>%
@@ -291,7 +264,7 @@ df_ts_models %>%
          height = 5)
 
 
-# Plot 13: Evaluation of the models based on the residuals per region ----------
+# Plot 12: Evaluation of the models based on the residuals per region ----------
 df_ts_models %>%
   unnest(aug) %>%
   select(region, ts, count,.resid) %>%
@@ -322,7 +295,7 @@ df_patient_pca <-
   select_if(~length(unique(.)) > 1) # removing columns with same value
 
 
-# Plot 14: Making PCA of the subset --------------------------------------------
+# Plot 13: Making PCA of the subset --------------------------------------------
 # Selecting only the binary variables to avoid scale
 df_patient_pca %>%
   select(-age) %>%
@@ -376,7 +349,7 @@ df_patient_dec_fit <-
         minsplit = 1, minbucket = 2, cp = 0.004)
 
 
-# Plot 15: Plotting the tree ---------------------------------------------------
+# Plot 14: Plotting the tree ---------------------------------------------------
 # Not able to save the image, done manually
 rpart.plot(df_patient_dec_fit, roundint = FALSE, extra = "auto")
 
@@ -419,7 +392,6 @@ ggsave(path = "results",
 
 
 # Calculating accuracy
-<<<<<<< HEAD
 dec_tree_model_acc <- round(sum(diag(table_cm)) / sum(table_cm),3)
 
 
@@ -432,7 +404,3 @@ dec_tree_model_acc <- round(sum(diag(table_cm)) / sum(table_cm),3)
 #        plot = bl62_pca_aug_plt,
 #        width = 10,
 #        height = 6)
-=======
-dec_tree_model_acc <-
-  round(sum(diag(table_cm)) / sum(table_cm),3)
->>>>>>> 6dbff6f7b2b1586ca2f5b0a04c557dab00bafa21
