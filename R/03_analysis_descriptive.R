@@ -230,11 +230,7 @@ df_ts %>%
 # Selecting few countries and nesting per province and time series type
 df_ts_selected<- df_ts %>%
   filter(province %in% c("Denmark", "Sweden", "Romania",
-<<<<<<< HEAD
                          "Turkey","Philippines")) %>%
-=======
-                       "Turkey","Philippines")) %>%
->>>>>>> cc86c54cf0dca2971de3fe9db01dc9c723e654d7
   filter(date_observation >= "2020-03-11") %>% # Starting from lockdown
   gather(ts, count, total_confirmed:total_deaths_per_mil_pop) %>%
   group_by(province, ts) %>%
@@ -439,8 +435,4 @@ dec_tree_model_acc <- round(sum(diag(table_cm)) / sum(table_cm),3)
 #        filename = "04_plot.png",
 #        plot = bl62_pca_aug_plt,
 #        width = 10,
-<<<<<<< HEAD
 #        height = 6)
-=======
-#        height = 6)
->>>>>>> cc86c54cf0dca2971de3fe9db01dc9c723e654d7
