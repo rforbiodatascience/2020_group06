@@ -1,37 +1,56 @@
-# Clear workspace
-# ------------------------------------------------------------------------------
+# Clear workspace --------------------------------------------------------------
 rm(list = ls())
 
 
-# Load libraries
-# ------------------------------------------------------------------------------
+# Load libraries ---------------------------------------------------------------
 library("tidyverse")
 library("purr")
 library("deSolve")
 
-# Define functions
-# ------------------------------------------------------------------------------
+# Define functions -------------------------------------------------------------
 source(file = "R/99_func.R")
 
 
-# Load data
-# ------------------------------------------------------------------------------
+# Load data --------------------------------------------------------------------
 df_ts <- read_csv(file = "data/_augmented/final_ts_world_df_augm.csv")
 df_SIR <- read_csv(file = "data/_augmented/SIR_df.csv")
 
-# Plot Scandinavia time series
-# ------------------------------------------------------------------------------
+# Plot Scandinavia time series -------------------------------------------------
 ggplot(data=df_ts %>%
          filter(region == 'Denmark' | region == 'Norway' | region == 'Sweden'),
-       mapping = aes(x = days_since_first, y = total_confirmed,
-                     group = region, color = region)) +
+       mapping = aes(x = days_since_first,
+                     y = total_confirmed,
+                     group = region,
+                     color = region)) +
   xlab("Days since first infection") +
   ylab("Total infections (cumulative)") +
   geom_point() +
   xlim(c(0,100))
 
-# SIR modelling - Sweden
-# ------------------------------------------------------------------------------
+# Plot observed number of infected/recovered in Denmark ------------------------
+# first convert df to long format for plotting
+df_SIR_long <- df_SIR %>%
+  select(region, date_observation, days_since_first, I, R) %>%
+  filter(days_since_first>=0) %>%
+  pivot_longer(cols = c(-region,-date_observation,-days_since_first),
+               names_to = "variable",
+               values_to = "value")
+
+ggplot(data=df_SIR_long %>% filter(region == "Denmark"),
+       mapping = aes(x = date_observation,
+                     y = value,
+                     group = variable,
+                     color = variable)) +
+  labs(title = "COVID-19 in Denmark",
+       subtitle = "Infected and recovered pateients",
+       x = "Date",
+       y = "Number of cases",
+       color = "Cases") +
+  scale_color_manual(labels = c("Infected", "Recovered"),
+                     values = c("#F8766D", "#619CFF")) +
+  geom_point()
+
+# SIR modelling - Sweden -------------------------------------------------------
 # ODEs describing susceptible, infected and recovered
 SIR <- function(time,state,parameters) {
   with(as.list(c(state,parameters)), {
@@ -91,8 +110,7 @@ opt$par
 R0 <- opt$par[1]/opt$par[2]
 
 
-# Plot the result
-# ------------------------------------------------------------------------------
+# Plot the result --------------------------------------------------------------
 times <- seq (0,150)
 
 df_fitted <- ode(y=initial_values,
@@ -147,23 +165,7 @@ ggplot(df_Sweden_long %>%
   xlim(c(0,150)) +
   labs(title = "Sweden COVID-19: SIR-based prediction",
        x = "Days since first infection",
-       y = "Number of people",
+       y = "Number of cases",
        color = "Measure") +
-  scale_color_manual(labels = c("Infected", "Recovered"),
+  olor_manual(labels = c("Infected", "Recovered"),
                      values = c("#F8766D", "#619CFF"))
-
-
-df_SIR_long <- df_SIR %>%
-  select(region, date_observation, days_since_first, I, R) %>%
-  filter(days_since_first>=0) %>%
-  pivot_longer(cols = c(-region,-date_observation,-days_since_first),
-               names_to = "variable",
-               values_to = "value")
-
-ggplot(data=df_SIR_long %>% filter(region == "Denmark"),
-       mapping = aes(x = date_observation, y = value, group = variable, color = variable)) +
-  geom_point()
-
-
-
-
