@@ -36,7 +36,7 @@ df_SIR_long <- df_SIR %>%
                names_to = "variable",
                values_to = "value")
 
-ggplot(data=df_SIR_long %>% filter(region == "Denmark"),
+p_denmark_obs <- ggplot(data=df_SIR_long %>% filter(region == "Denmark"),
        mapping = aes(x = date_observation,
                      y = value,
                      group = variable,
@@ -49,6 +49,13 @@ ggplot(data=df_SIR_long %>% filter(region == "Denmark"),
   scale_color_manual(labels = c("Infected", "Recovered"),
                      values = c("#F8766D", "#619CFF")) +
   geom_point()
+
+ggsave(path = "results",
+       "04_denmark_obs.png",
+       p_denmark_obs,
+       width = 5,
+       height = 4
+)
 
 # SIR modelling - Sweden -------------------------------------------------------
 # ODEs describing susceptible, infected and recovered
@@ -135,7 +142,7 @@ df_Sweden_long <- df_SIR %>%
                values_to = "value")
 
 # compare observed and predicted infections
-ggplot(df_Sweden_long %>%
+p_sweden_obs_fit <- ggplot(df_Sweden_long %>%
          filter(measure == "I_observed"
                 | measure == "I_fitted"),
        mapping = aes(x = days_since_first,
@@ -153,8 +160,15 @@ ggplot(df_Sweden_long %>%
   scale_color_manual(labels = c("Predicted", "Observed"),
                      values = c("#F8766D", "#619CFF"))
 
+ggsave(path = "results",
+       "04_sweden_obs_vs_fit.png",
+       p_sweden_obs_fit,
+       width = 5,
+       height = 4
+       )
+
 # plot the prediction on a longer time scale
-ggplot(df_Sweden_long %>%
+p_sweden_pred <- ggplot(df_Sweden_long %>%
          filter(measure == "I_fitted" |
                   measure == "R_fitted"),
        mapping = aes(x = days_since_first,
@@ -167,5 +181,12 @@ ggplot(df_Sweden_long %>%
        x = "Days since first infection",
        y = "Number of cases",
        color = "Measure") +
-  olor_manual(labels = c("Infected", "Recovered"),
+  scale_color_manual(labels = c("Infected", "Recovered"),
                      values = c("#F8766D", "#619CFF"))
+
+ggsave(path = "results",
+       "04_sweden_pred.png",
+       p_sweden_pred,
+       width = 5,
+       height = 4
+)
