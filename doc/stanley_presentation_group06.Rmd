@@ -1,0 +1,144 @@
+---
+title: "presentation_group06"
+author: "Sebastian Sbirna, Sule Altinas & Stanley Frederiksen"
+date: "14 May 2020"
+output:
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library("imager")
+library("cowplot")
+library("magick")
+library("tidyverse")
+```
+
+## Introduction
+
+At the end of December 2019, __COVID19__ (also known as SARS-CoV-2) coronavirus was first identified to be outbreaking in Wuhan, China. The virus continued to spread rapidly across the whole area of China, and later on, in some regions of Europe as well. 
+
+On the day of __11 March 2020__, the World Health Organization (WHO) had acknowledged the fast spreading and major health risks of the COVID19 outbreak, and have classified it as a *__pandemic__*. The world has been majorly affected, with the deepest outbreaks in China, USA and Italy.
+
+
+Some questions that one can immediately ask are: 
+
+- **How quickly did the virus spread across the globe?**
+- **Can we see any effect from country-wide policies that various countries have implemented, such as shutdowns and quarantines?**
+
+
+## Introduction
+
+From expert analysis and clinical information, we know that COVID19 spreads through *__respiratory droplets__*, such as when sneezing, coughing or speaking. 
+
+Organizations and researchers across the whole world have been collecting data for monitoring and learning about this pandemic. Notably, the **Johns Hopkins University** created a publicly available data repository to consolidate research efforts. 
+
+## Introduction
+
+Our project has used a modified version of this data, which is available from Kaggle: <https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset>, by _Sudalai Rajkumar_, which consists of both patient data from the first 2 months of the outbreak with time-series data about the spread of the virus.
+
+Please note that infection spreading information and data regarding COVID19 is being updated every day. The data used for this project was first pulled on 15 April 2020, and has been updated accordingly since then. __The last update of the data was done on 13 May 2020.__
+
+
+## Biological insights
+
+- How does the COVID-19 affect each gender?
+
+- Which symptoms are we likely to observe among the patients?
+
+- Can we predict the patient's progression?
+
+<!-- ## Introduction -->
+
+<!-- Outline for the presentation: -->
+
+<!-- - Agenda (...)                     - Sule -->
+<!-- - Introduction -->
+<!--   * The dataset (where is it from) - Sebastian (Sule help) -->
+<!--   * Stanley's heatmap              - Stanley -->
+<!-- - Problem Formulation -->
+<!--   * Biological insight questions   - Stanley -->
+<!--   * General questions              - Sule & Stanley -->
+<!-- - Methodology (how we did things, no results) -->
+<!--   * Packages                       - Sule & Stanley -->
+<!--   * Data workflow                   -->
+<!--     * Data import & wrangling      - Sebastian -->
+<!--     * Data augmentation            - Sebastian -->
+<!--   * Analysis workflow               -->
+<!--     * Descriptive analytics        - Stanley -->
+<!--     * SIR modeling                 - Sule -->
+<!-- - Results -->
+<!--   * Descriptive statistics results - Sebastian, Stanley -->
+<!--   * SIR modeling results           - Sule -->
+<!--   * Patient symptoms results       - Sebastian, Stanley -->
+<!--     - Symptom correlation plot (pivot_longer) -->
+<!-- - Discussion                       - Sule -->
+<!--   * Shiny                          - Sule -->
+<!-- - Conclusion                       - All -->
+<!-- - "Thank you"/"Questions?" slide   - Sebastian -->
+
+
+<!-- Data Wrangling: -->
+<!-- - Flowchart about data wrangling -->
+
+
+
+<!-- ## Slide with Bullets -->
+
+<!-- - Bullet 1 -->
+<!-- - Bullet 2 -->
+<!-- - Bullet 3 -->
+
+## Heatmap of confirmed cases
+
+Status of the COVID-19 confirmed cases in the world
+
+- Observed from January-February 2020
+
+```{r fig.align="center"}
+
+heatmap_confirmed <- load.image("../results/heatmap_confirmed.png")
+
+ggdraw() +
+  draw_image(heatmap_confirmed, scale = 1,
+  clip = "on")
+
+
+```
+
+
+
+
+## Which countries are most affected
+
+* China is excluded
+
+- Only when observed more than 100 cases
+
+```{r fig.align="center"}
+
+cases_above_hundred <- load.image("../results/cases_above_hundred.png")
+
+ggdraw() +
+  draw_image(cases_above_hundred, scale = 1,
+  clip = "on")
+
+```
+
+# Analytics
+
+
+## Gender dependency
+
+```{r fig.align="center"}
+
+age_symptoms_death_wuhan <- load.image("../results/age_symptoms_death_wuhan.png")
+
+ggdraw() +
+  draw_image(age_symptoms_death_wuhan, scale = 1,
+  clip = "on")
+
+```
+
+
