@@ -59,7 +59,7 @@ Status of the COVID-19 confirmed cases in the world
 
 ```{r fig.align="center"}
 
-heatmap_confirmed <- load.image("../results/heatmap_confirmed.png")
+heatmap_confirmed <- load.image("../results/03_heatmap_confirmed.png")
 
 ggdraw() +
   draw_image(heatmap_confirmed, scale = 1,
@@ -92,7 +92,7 @@ For this, we need:
 
 ```{r fig.align="center"}
 
-cases_above_hundred <- load.image("../results/cases_above_hundred.png")
+cases_above_hundred <- load.image("../results/03_cases_above_hundred.png")
 
 ggdraw() +
   draw_image(cases_above_hundred, scale = 1,
@@ -109,7 +109,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-distribution_age_group_gender <- load.image("../results/distribution_age_group_gender.png")
+distribution_age_group_gender <- load.image("../results/03_distribution_age_group_gender.png")
 
 ggdraw() +
   draw_image(distribution_age_group_gender, scale = 1,
@@ -126,7 +126,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-age_symptoms_death_wuhan <- load.image("../results/age_symptoms_death_wuhan.png")
+age_symptoms_death_wuhan <- load.image("../results/03_age_symptoms_death_wuhan.png")
 
 ggdraw() +
   draw_image(age_symptoms_death_wuhan, scale = 1,
@@ -143,7 +143,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-Prevalence_symptoms <- load.image("../results/Prevalence_symptoms.png")
+Prevalence_symptoms <- load.image("../results/03_prevalence_symptoms.png")
 
 ggdraw() +
   draw_image(Prevalence_symptoms, scale = 1,
@@ -236,7 +236,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-onset_to_admission <- load.image("../results/onset_to_admission.png")
+onset_to_admission <- load.image("../results/03_onset_to_admission.png")
 
 ggdraw() +
   draw_image(onset_to_admission, scale = 1,
@@ -253,7 +253,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-confirmed_per_mill <- load.image("../results/confirmed_per_mill.png")
+confirmed_per_mill <- load.image("../results/03_confirmed_per_mill.png")
 
 ggdraw() +
   draw_image(confirmed_per_mill, scale = 1,
@@ -269,7 +269,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-deaths_per_mill <- load.image("../results/deaths_per_mill.png")
+deaths_per_mill <- load.image("../results/03_deaths_per_mill.png")
 
 ggdraw() +
   draw_image(deaths_per_mill, scale = 1,
@@ -284,7 +284,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-confirmed_death_per_mil_pop <- load.image("../results/confirmed_death_per_mil_pop.png")
+confirmed_death_per_mil_pop <- load.image("../results/03_confirmed_death_per_mil_pop.png")
 
 ggdraw() +
   draw_image(confirmed_death_per_mil_pop, scale = 1,
@@ -301,7 +301,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-table_df_ts_models_stats <- load.image("../results/table_df_ts_models_stats.png")
+table_df_ts_models_stats <- load.image("../results/03_table_df_ts_models_stats.png")
 
 ggdraw() +
   draw_image(table_df_ts_models_stats, scale = 1,
@@ -316,7 +316,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-model_eval_confirmed <- load.image("../results/model_eval_confirmed.png")
+model_eval_confirmed <- load.image("../results/03_model_eval_confirmed.png")
 
 ggdraw() +
   draw_image(model_eval_confirmed, scale = 1,
@@ -331,7 +331,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-model_eval_death <- load.image("../results/model_eval_death.png")
+model_eval_death <- load.image("../results/03_model_eval_death.png")
 
 ggdraw() +
   draw_image(model_eval_death, scale = 1,
@@ -347,7 +347,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-model_eval_residuals <- load.image("../results/model_eval_residuals.png")
+model_eval_residuals <- load.image("../results/03_model_eval_residuals.png")
 
 ggdraw() +
   draw_image(model_eval_residuals, scale = 1,
@@ -401,7 +401,7 @@ knitr::include_graphics("../results/04_sweden_pred.png")
 
 ```{r fig.align="center"}
 
-pca_biological_features <- load.image("../results/pca_biological_features.png")
+pca_biological_features <- load.image("../results/03_pca_biological_features.png")
 
 ggdraw() +
   draw_image(pca_biological_features, scale = 1,
@@ -417,7 +417,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-df_patient_dec_fit <- load.image("../results/df_patient_dec_fit.png")
+df_patient_dec_fit <- load.image("../results/03_df_patient_dec_fit.png")
 
 ggdraw() +
   draw_image(df_patient_dec_fit, scale = 1,
@@ -433,7 +433,7 @@ ggdraw() +
 
 ```{r fig.align="center"}
 
-table_cm_plot <- load.image("../results/table_cm_plot.png")
+table_cm_plot <- load.image("../results/03_table_cm_plot.png")
 
 ggdraw() +
   draw_image(table_cm_plot, scale = 1,
