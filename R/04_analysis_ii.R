@@ -16,37 +16,23 @@ source(file = "R/99_func.R")
 
 # Load data
 # ------------------------------------------------------------------------------
-df_patient <- read_csv(file = "data/_augmented/final_patient_data_df_augm.csv")
 df_ts <- read_csv(file = "data/_augmented/final_ts_world_df_augm.csv")
+df_SIR <- read_csv(file = "data/_augmented/SIR_df.csv")
 
-
-df_ts <- df_ts %>%
-  group_by(province) %>%
-  mutate(tmp_date = case_when(total_confirmed > 0 ~ date_observation)) %>%
-  mutate(days_since_first = date_observation - min(tmp_date, na.rm = TRUE)) %>%
-  ungroup %>%
-  select(-tmp_date) %>%
-  mutate(days_since_first = as.numeric(days_since_first,units="days"))
-
-df_SIR = df_ts %>%
-  rename(N = total_population) %>%
-  mutate(I = total_confirmed - total_recovered - total_deaths) %>%
-  mutate(R = total_recovered + total_deaths) %>%
-  mutate(S = N - I - R) %>%
-  select(province, N, date_observation, days_since_first, S, I, R)
-
-
-# Plot time series
+# Plot Scandinavia time series
 # ------------------------------------------------------------------------------
 ggplot(data=df_ts %>%
          filter(province == 'Denmark' | province == 'Norway' | province == 'Sweden'),
        mapping = aes(x = days_since_first, y = total_confirmed,
                      group = province, color = province)) +
+  xlab("Days since first infection") +
+  ylab("Total infections (cumulative)") +
   geom_point() +
   xlim(c(0,100))
 
 # SIR modelling
 # ------------------------------------------------------------------------------
+# ODEs describing susceptible, infected and recovered
 SIR <- function(time,state,parameters) {
   with(as.list(c(state,parameters)), {
   dS = -beta*I*S / N
@@ -57,16 +43,19 @@ SIR <- function(time,state,parameters) {
   })
 }
 
-parameters <- c(
-  beta = 0.000000001,
-  gamma = 0.000005
-)
+# vector of time points from point 0 to latest
+max_days <- df_SIR %>%
+  filter(province == 'Denmark') %>%
+  select(days_since_first) %>%
+  max()
 
-times = seq(1,80)
+times <- seq(0,max_days)
 
-ode(y=initial_values, times = times, func = SIR, parms = parameters)
-
-N <- df_ts %>% filter(province == 'Denmark') %>% select(total_population) %>% min()
+# population size
+N <- df_SIR %>%
+  filter(province == 'Denmark') %>%
+  select(N) %>%
+  min()
 
 initial_values <- c(
   S = N - 1,
@@ -74,15 +63,24 @@ initial_values <- c(
   R = 0
 )
 
+# function to be minimized (residual square error)
 RSS <- function(parameters) {
-  fit = ode(y=initial_values, times = times, func = SIR, parms = parameters)[, 3]
-  return(sum((fit - df_SIR %>% filter(province == "Denmark") %>% select(I))^2))
+  #predicted infections
+  fit = ode(y=initial_values,
+            times = times,
+            func = SIR,
+            parms = parameters)[, 3]
+  #observed infections
+  obs = df_SIR %>%
+    filter(province == "Denmark" & days_since_first >= 0) %>%
+    select(I)
+  return(sum((fit - obs/N)^2))
 }
 
 opt <- optim(c(beta=0.5, gamma=0.5),
              RSS,
              method = "L-BFGS-B",
-             lower = c(0, 0),
+             lower = c(1/N, 1/N),
              upper = c(1, 1)
 )
 
@@ -104,5 +102,7 @@ df_SIR_long <- df_SIR %>%
 ggplot(data=df_SIR_long %>% filter(province == "Denmark"),
        mapping = aes(x = date_observation, y = value, group = variable, color = variable)) +
   geom_point()
+
+
 
 
