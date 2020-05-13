@@ -74,5 +74,11 @@ Heavy data wrangling & tidying procedures were necessary, in order to achieve co
 ### _How did we achieve data wrangling?_
 * Very heavy use of `stringr` and __`regexp (regular expressions)`__
 * `dplyr` to the rescue - filtering, mutating, grouping, summarizing
-* `lubridate` for dates conversion
+* `tidyr` for reshaping tibbles into __wide/long format__
+* `lubridate` for __dates conversion__
 * Achieved a consistent andn easy-to-understand workflow through _piping_ (`%>%`)
+
+## Methodology
+### Data Import & Wrangling
+
+Heavy data wrangling & tidying procedures were necessary, in order to achieve consistency across the different datasets:
