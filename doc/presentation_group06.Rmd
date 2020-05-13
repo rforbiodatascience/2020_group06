@@ -1,5 +1,5 @@
 ---
-title: "presentation_group06"
+title: "COVID-19 analysis and modelling"
 author: "Sebastian Sbirna, Sule Altinas & Stanley Frederiksen"
 date: "14 May 2020"
 output:
@@ -16,31 +16,9 @@ library("tidyverse")
 library("imager")
 ```
 
-## Introduction
+## Github repository
 
-At the end of December 2019, __COVID19__ (also known as SARS-CoV-2) coronavirus was first identified to be outbreaking in Wuhan, China. The virus continued to spread rapidly across the whole area of China, and later on, in some regions of Europe as well. 
-
-On the day of __11 March 2020__, the World Health Organization (WHO) had acknowledged the fast spreading and major health risks of the COVID19 outbreak, and have classified it as a *__pandemic__*. The world has been majorly affected, with the deepest outbreaks in China, USA and Italy.
-
-
-Some questions that one can immediately ask are: 
-
-- **How quickly did the virus spread across the globe?**
-- **Can we see any effect from country-wide policies that various countries have implemented, such as shutdowns and quarantines?**
-
-
-## Introduction
-
-From expert analysis and clinical information, we know that COVID19 spreads through *__respiratory droplets__*, such as when sneezing, coughing or speaking. 
-
-Organizations and researchers across the whole world have been collecting data for monitoring and learning about this pandemic. Notably, the **Johns Hopkins University** created a publicly available data repository to consolidate research efforts. 
-
-## Introduction
-
-Our project has used a modified version of this data, which is available from Kaggle: <https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset>, by _Sudalai Rajkumar_, which consists of both patient data from the first 2 months of the outbreak with time-series data about the spread of the virus.
-
-Please note that infection spreading information and data regarding COVID19 is being updated every day. The data used for this project was first pulled on 15 April 2020, and has been updated accordingly since then. __The last update of the data was done on 13 May 2020.__
-
+<https://github.com/rforbiodatascience/2020_group06>
 
 ## Introduction
 ### The dataset
@@ -52,16 +30,7 @@ Our project has used a modified version of this data, which is available from Ka
 
 Please note that infection spreading information and data regarding COVID19 is being updated every day. The data used for this project was first pulled on 15 April 2020, and has been updated accordingly since then. 
 
-*__The last update of the data was done on 13 May 2020.__*
-
-
-## Biological insights
-
-- How does the COVID-19 affect each gender?
-
-- Which symptoms are we likely to observe among the patients?
-
-- Can we predict the patient's progression?
+*__The last update of the data was done on 1 May 2020.__*
 
 
 ## Heatmap of confirmed cases
@@ -82,6 +51,8 @@ ggdraw() +
 
 ```
 
+# Methods
+
 ## Methodology
 ### Data Import
 
@@ -91,16 +62,20 @@ ggdraw() +
   * `COVID19_open_line_list.csv`: second patient data file, with ~10000 records
   * `time_series_covid_19_confirmed.csv`: daily number of confirmed cases around the world 
   * `time_series_covid_19_confirmed_US.csv`: daily number of confirmed cases only for US and its states
+  
+## Methodology
+### Data Import
+* This modified version of the JHU dataset initially contained 9 "untidy" dataframes:
   * `time_series_covid_19_deaths.csv`: daily number of deceased cases around the world
   * `time_series_covid_19_deaths_US.csv`: daily number of deceased cases only for US and its states
   * `time_series_covid_19_recovered.csv`: daily number of recovered cases around the world
   * `wpp2019_total_population.csv`: data downloaded from <https://population.un.org/wpp/Download/Standard/CSV/> which has the total population of a country in 2019
   
-  
+
 ## Methodology
 ### Data Wrangling
 
-* All these dataframes were very dirty
+* All these dataframes were very messy
   * Different number and type of attributes
   * Different formats for storing country & provinces
   * Different methodology of collecting time-series data
@@ -108,23 +83,7 @@ ggdraw() +
   * Conceptual string duplicates (e.g. _runny nose_ and _nasal discharge_ )
   * ... and more
   
-  
-## Methodology
-### Data Wrangling
 
-Heavy data wrangling & tidying procedures were necessary, in order to achieve consistency across the different datasets:
-
-* ___Column renaming to a common scheme___
-* ___Remove data inconsistencies in province and country strings___
-* ___Transformation of missing values to a common format___
-* ___Empty and unnecessary column removal___
-* ___Replace conceptual duplicates in the patient symptom data___
-* ___Fixing erroneous age values___
-* ___Date conversion into a unitary format___
-* ___Tidying time-series dataset into long format (date column)___
-* ___Tidying patient data into wide format (symptoms column)___
-  
-  
 ## Methodology
 ### _How did we achieve data wrangling?_
 * Very heavy use of `stringr` and __`regexp (regular expressions)`__
@@ -135,18 +94,6 @@ Heavy data wrangling & tidying procedures were necessary, in order to achieve co
 * Achieved a consistent andn easy-to-understand workflow through _piping_ (`%>%`)
 
 
-## Methodology
-### Data Augmentation
-
-After cleaning the data, we augmented it by manipulating it to create new, useful columns:
-
-* ___Created categorical age groups for patients___
-* ___Joined together the two patient dataframes into one___
-* ___Joined together the three time-series world dataframes (confirmed, recovered,deaths) into one___
-* ___Augmented the Time-Series data with total population numbers___
-  * ___Computed proportion of population infected per 1 million inhabitants___
-  * ___Computed daily new infections, recovered and deaths from the time-series data___
-  
   
 ## Methodology
 ### _How did we achieve data augmentation?_
@@ -155,8 +102,6 @@ After cleaning the data, we augmented it by manipulating it to create new, usefu
 * `forcats` for ordering categorical variables
 * `readr` for reading and saving CSV files easily
 
-
-# Methods
 
 ## Fitting beta and gamma to the data
 How to find the optimal values of $\beta$ and $\gamma$?
@@ -169,23 +114,16 @@ For this, we need:
 - An optimizer: built-in R function optimize()
 
 
-# Descriptive
+# Exploratory data analysis
 
-## Which countries are most affected
 
-*China is excluded
-*Plot shows only when observed more than 100 cases
+## Biological insights
 
-```{r fig.align="center"}
+- How does the COVID-19 affect each gender?
 
-cases_above_hundred <- load.image("../results/03_cases_above_hundred.png")
+- Which symptoms are we likely to observe among the patients?
 
-ggdraw() +
-  draw_image(cases_above_hundred, scale = 1,
-  clip = "on")
-
-```
-
+- Can we predict the patient's progression?
 
 
 ## Data distribution among age and gender
@@ -204,25 +142,6 @@ ggdraw() +
 ```
 
 
-
-## Differences in age
-
-- Older people are likely to die
-- Only (male) patients without contact with Wuhan died while having dyspnea
-
-```{r fig.align="center"}
-
-age_symptoms_death_wuhan <- load.image("../results/03_age_symptoms_death_wuhan.png")
-
-ggdraw() +
-  draw_image(age_symptoms_death_wuhan, scale = 1,
-  clip = "on")
-
-```
-
-# Symptoms
-
-
 ## Prevalence of symptoms
 
 - fever, cough and sore throat are the most frequent symptoms observed among the patients
@@ -233,35 +152,6 @@ Prevalence_symptoms <- load.image("../results/03_prevalence_symptoms.png")
 
 ggdraw() +
   draw_image(Prevalence_symptoms, scale = 1,
-  clip = "on")
-
-```
-
-## Comorbidity of symptoms
-
-- When having fever, the patiens were also likely to have cough, dyspnea, fatigue, malaise and sore throat
-
-```{r fig.align="center"}
-
-symptoms_comorbidity <- load.image("../results/05_symptoms_comorbidity.png")
-
-ggdraw() +
-  draw_image(symptoms_comorbidity, scale = 1.1,
-  clip = "on")
-
-```
-
-
-## Correlation of symptoms
-
-- Cough and fever have the highest correlation ~0.5
-
-```{r fig.align="center"}
-
-symptoms_corr_heatmap <- load.image("../results/05_symptoms_corr_heatmap.png")
-
-ggdraw() +
-  draw_image(symptoms_corr_heatmap, scale = 1.1,
   clip = "on")
 
 ```
@@ -312,10 +202,6 @@ ggdraw() +
 ```
 
 
-
-# Time series
-
-
 ## Time to admission
 
 - The time from experiencing symptoms to hospitalization does not tend to differ whether the patient have been in contact with Wuhan or not.
@@ -332,8 +218,6 @@ ggdraw() +
 
 
 ## Total confirmed cases per million population
-
-*selected countries
 
 - Sweden have most confirmed cases and Philippines have the least cases
 
@@ -362,6 +246,7 @@ ggdraw() +
   clip = "on")
 
 ```
+
 
 
 # Linear Models
@@ -435,17 +320,14 @@ knitr::include_graphics("../img/SIR.png")
 ```
 $$\frac{dS}{dt} = \beta\cdot S\cdot I $$
 $$\frac{dS}{dt} = \beta\cdot S\cdot I $$
-$$\frac{dR}{dt} = \gamma*I $$
+
+$$\frac{dR}{dt} = \gamma \cdot I $$
 
 ## Observed cases in Denmark
 ```{r,  out.width =  "700", fig.align = 'center'}
 knitr::include_graphics("../results/04_Denmark_obs.png")
 ```
 
-## Observed cases in Scandinavia
-```{r,  out.width =  "580px", fig.align = 'center'}
-knitr::include_graphics("../results/04_scandinavia_obs.png")
-```
 
 ## Resulting parameters: Sweden
 
@@ -463,12 +345,17 @@ knitr::include_graphics("../results/04_sweden_obs_vs_fit.png")
 knitr::include_graphics("../results/04_sweden_pred.png")
 ```
 
+# Shiny app demonstration of the epidemical model
+
+<https://sule-altintas.shinyapps.io/SIR_app/>
+
 
 # Dimensional reduction and Machine Learning
 
 ## PCA
 
 - The first three PCs account for ~60% of the total variance
+- Biological features: symptoms, age, gender, contact with wuhan
 
 ```{r fig.align="center"}
 
@@ -513,7 +400,7 @@ ggdraw() +
 ```
 
 
-# Summary
+# Discussion and challenges
 
 ## Discussion
 
@@ -521,11 +408,13 @@ ggdraw() +
 - Symptoms caused by COVID-19 resemble influenza (fever, cough, sore throath etc.)
 - Death is merely due to age, while recovery may depend on experienced symptoms
 - Community/political actions can have an affect on infection, which can be seen between Denmark and Sweden (two comparable nations)
-- Linear model may not be appropriate for the confirmed cases but works well for the death cases
-- It may not be an advantage to reduce the dimension of the data set with PCA
+- Linear model may not be appropriate for the confirmed cases but works well for the death cases.
+- The SIR-modelling may be too simple, an extension may be required
 - Decision tree is suitable and interpretable for predicting patient progression
 
 ## Challenges
 
 - We were not able to find a suitable function to save the plots of the heatmap and decision tree. This was done manually by export
 - Multiple errors occured when using github, reverting was necessary a couple of times
+
+# Questions?
