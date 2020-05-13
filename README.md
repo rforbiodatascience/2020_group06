@@ -36,7 +36,6 @@ The following dependencies are necessary to run our project:
   * __caret__
   * __gridExtra__
   * __deSolve__
-  * __shiny__ (_only needed to run our corresponding Shiny app locally_)
 
 ## Usage
 By running the script R/00_do.R, the full data analysis can be carried out. This is especially useful if updating the data in data/_raw with the new daily numbers, as new data will be incorporated into all resulting plots.
