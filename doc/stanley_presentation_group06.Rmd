@@ -50,6 +50,46 @@ Please note that infection spreading information and data regarding COVID19 is b
 
 - Can we predict the patient's progression?
 
+<!-- ## Introduction -->
+
+<!-- Outline for the presentation: -->
+
+<!-- - Agenda (...)                     - Sule -->
+<!-- - Introduction -->
+<!--   * The dataset (where is it from) - Sebastian (Sule help) -->
+<!-- - Problem Formulation -->
+
+<!--   * General questions              - Sule & Stanley -->
+<!-- - Methodology (how we did things, no results) -->
+<!--   * Packages                       - Sule & Stanley -->
+<!--   * Data workflow                   -->
+<!--     * Data import & wrangling      - Sebastian -->
+<!--     * Data augmentation            - Sebastian -->
+<!--   * Analysis workflow               -->
+
+<!--     * SIR modeling                 - Sule -->
+<!-- - Results -->
+
+<!--   * SIR modeling results           - Sule -->
+
+<!--     - Symptom correlation plot (pivot_longer) -->
+<!-- - Discussion                       - Sule -->
+<!--   * Shiny                          - Sule -->
+<!-- - Conclusion                       - All -->
+<!-- - "Thank you"/"Questions?" slide   - Sebastian -->
+
+
+<!-- Data Wrangling: -->
+<!-- - Flowchart about data wrangling -->
+
+
+
+<!-- ## Slide with Bullets -->
+
+<!-- - Bullet 1 -->
+<!-- - Bullet 2 -->
+<!-- - Bullet 3 -->
+
 ## Heatmap of confirmed cases
 
 Status of the COVID-19 confirmed cases in the world

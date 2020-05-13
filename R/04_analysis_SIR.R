@@ -29,15 +29,17 @@ p_scandinavia_obs <-
                        y = total_confirmed,
                        group = region,
                        color = region)) +
-    xlab("Days since first infection") +
-    ylab("Total infections (cumulative)") +
-    geom_point() +
-    xlim(c(0,100))
+  labs(title = "COVID-19 in Scandinavia",
+       subtitle = "Infections by country",
+       x = "Days since first infection", y = "Total infections (cumulative)",
+       color = "Cases") +
+  geom_point() +
+  xlim(c(0,100))
 
 ggsave(path = "results",
        filename = "04_scandinavia_obs.png",
        plot = p_scandinavia_obs,
-       width = 5,
+       width = 6,
        height = 4)
 
 
@@ -51,25 +53,24 @@ df_SIR_long <-
                names_to = "variable",
                values_to = "value")
 
-
 p_denmark_obs <-
   ggplot(data = df_SIR_long %>% filter(region == "Denmark"),
          mapping = aes(x = date_observation,
                        y = value,
                        group = variable,
                        color = variable)) +
-    labs(title = "COVID-19 in Denmark",
-         subtitle = "Infected and recovered pateients",
-         x = "Date", y = "Number of cases", color = "Cases") +
-    scale_color_manual(labels = c("Infected", "Recovered"),
-                       values = c("#F8766D", "#619CFF")) +
-    geom_point()
+  labs(title = "COVID-19 in Denmark",
+       subtitle = "Infected and recovered pateients",
+       x = "Date", y = "Number of cases", color = "Cases") +
+  scale_color_manual(labels = c("Infected", "Recovered"),
+                     values = c("#F8766D", "#619CFF")) +
+  geom_point()
 
 
 ggsave(path = "results",
        filename = "04_denmark_obs.png",
        plot = p_denmark_obs,
-       width = 5,
+       width = 6,
        height = 4)
 
 
@@ -177,22 +178,22 @@ p_sweden_obs_fit <-
                        y = value,
                        group = measure,
                        color = measure)) +
-    geom_point() +
-    xlim(c(0,max_days)) +
-    ylim(c(0,30000)) +
-    labs(title = "Sweden COVID-19: Active cases",
-         subtitle = "Observed vs predicted",
-         x = "Days since first infection",
-         y = "Active infections",
-         color = "Measure") +
-    scale_color_manual(labels = c("Predicted", "Observed"),
-                       values = c("#F8766D", "#619CFF"))
+  geom_point() +
+  xlim(c(0,max_days)) +
+  ylim(c(0,30000)) +
+  labs(title = "Sweden COVID-19: Active cases",
+       subtitle = "Observed vs predicted",
+       x = "Days since first infection",
+       y = "Active infections",
+       color = "Measure") +
+  scale_color_manual(labels = c("Predicted", "Observed"),
+                     values = c("#F8766D", "#619CFF"))
 
 
 ggsave(path = "results",
        "04_sweden_obs_vs_fit.png",
        p_sweden_obs_fit,
-       width = 5,
+       width = 6,
        height = 4
        )
 
@@ -205,19 +206,19 @@ p_sweden_pred <-
                        y = value,
                        group = measure,
                        color = measure)) +
-    geom_point() +
-    xlim(c(0,150)) +
-    labs(title = "Sweden COVID-19: SIR-based prediction",
-         x = "Days since first infection",
-         y = "Number of cases",
-         color = "Measure") +
-    scale_color_manual(labels = c("Infected", "Recovered"),
-                       values = c("#F8766D", "#619CFF"))
+  geom_point() +
+  xlim(c(0,150)) +
+  labs(title = "Sweden COVID-19: SIR-based prediction",
+       x = "Days since first infection",
+       y = "Number of cases",
+       color = "Measure") +
+  scale_color_manual(labels = c("Infected", "Recovered"),
+                     values = c("#F8766D", "#619CFF"))
 
 
 ggsave(path = "results",
        "04_sweden_pred.png",
        p_sweden_pred,
-       width = 5,
+       width = 6,
        height = 4
 )
