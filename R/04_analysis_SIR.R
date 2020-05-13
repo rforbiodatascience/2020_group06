@@ -32,7 +32,7 @@ p_scandinavia_obs <-
   labs(title = "COVID-19 in Scandinavia",
        subtitle = "Infections by country",
        x = "Days since first infection", y = "Total infections (cumulative)",
-       color = "Cases") +
+       color = "Country") +
   geom_point() +
   xlim(c(0,100))
 
