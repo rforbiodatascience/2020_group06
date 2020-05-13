@@ -22,15 +22,15 @@ df_SIR <- read_csv(file = "data/_augmented/SIR_df.csv")
 # Plot Scandinavia time series
 # ------------------------------------------------------------------------------
 ggplot(data=df_ts %>%
-         filter(province == 'Denmark' | province == 'Norway' | province == 'Sweden'),
+         filter(region == 'Denmark' | region == 'Norway' | region == 'Sweden'),
        mapping = aes(x = days_since_first, y = total_confirmed,
-                     group = province, color = province)) +
+                     group = region, color = region)) +
   xlab("Days since first infection") +
   ylab("Total infections (cumulative)") +
   geom_point() +
   xlim(c(0,100))
 
-# SIR modelling
+# SIR modelling - Sweden
 # ------------------------------------------------------------------------------
 # ODEs describing susceptible, infected and recovered
 SIR <- function(time,state,parameters) {
@@ -45,7 +45,7 @@ SIR <- function(time,state,parameters) {
 
 # vector of time points from point 0 to latest
 max_days <- df_SIR %>%
-  filter(province == 'Denmark') %>%
+  filter(region == 'Sweden') %>%
   select(days_since_first) %>%
   max()
 
@@ -53,7 +53,7 @@ times <- seq(0,max_days)
 
 # population size
 N <- df_SIR %>%
-  filter(province == 'Denmark') %>%
+  filter(region == 'Sweden') %>%
   select(N) %>%
   min()
 
@@ -72,34 +72,95 @@ RSS <- function(parameters) {
             parms = parameters)[, 3]
   #observed infections
   obs = df_SIR %>%
-    filter(province == "Denmark" & days_since_first >= 0) %>%
+    filter(region == "Sweden" & days_since_first >= 0) %>%
     select(I)
-  return(sum((fit - obs/N)^2))
+  return(sum((fit - obs)^2))
 }
 
+#optimize parameters
 opt <- optim(c(beta=0.5, gamma=0.5),
              RSS,
              method = "L-BFGS-B",
-             lower = c(1/N, 1/N),
+             lower = c(0, 0),
              upper = c(1, 1)
 )
 
 opt$par
 
-df_fitted <- ode(y=initial_values, times = times, func = SIR, parms = opt$par) %>% as_tibble()
+# calculate the reproductive rate R0
+R0 <- opt$par[1]/opt$par[2]
 
-ggplot(df_fitted, mapping = aes(x = time, y = I)) +
+
+# Plot the result
+# ------------------------------------------------------------------------------
+times <- seq (0,150)
+
+df_fitted <- ode(y=initial_values,
+                 times = times,
+                 func = SIR,
+                 parms = opt$par) %>%
+  data.frame() %>%
+  as_tibble()
+
+df_Sweden_long <- df_SIR %>%
+  filter(region == "Sweden" & days_since_first >= 0) %>%
+  #join the observed and fitted values in one df
+  full_join(df_fitted,
+            by = c("days_since_first" = "time"),
+            suffix = c("_observed","_fitted")) %>%
+  #long format for plotting
+  select(days_since_first,
+         I_observed, I_fitted,
+         R_observed, R_fitted) %>%
+  pivot_longer(cols = -days_since_first,
+               names_to = "measure",
+               values_to = "value")
+
+# compare observed and predicted infections
+ggplot(df_Sweden_long %>%
+         filter(measure == "I_observed"
+                | measure == "I_fitted"),
+       mapping = aes(x = days_since_first,
+                                y = value,
+                                group = measure,
+                                color = measure)) +
   geom_point() +
-  xlim(c(0,100))
+  xlim(c(0,max_days)) +
+  ylim(c(0,30000)) +
+  labs(title = "Sweden COVID-19: Active cases",
+       subtitle = "Observed vs predicted",
+       x = "Days since first infection",
+       y = "Active infections",
+       color = "Measure") +
+  scale_color_manual(labels = c("Predicted", "Observed"),
+                     values = c("#F8766D", "#619CFF"))
+
+# plot the prediction on a longer time scale
+ggplot(df_Sweden_long %>%
+         filter(measure == "I_fitted" |
+                  measure == "R_fitted"),
+       mapping = aes(x = days_since_first,
+                                     y = value,
+                                     group = measure,
+                                     color = measure)) +
+  geom_point() +
+  xlim(c(0,150)) +
+  labs(title = "Sweden COVID-19: SIR-based prediction",
+       x = "Days since first infection",
+       y = "Number of people",
+       color = "Measure") +
+  scale_color_manual(labels = c("Infected", "Recovered"),
+                     values = c("#F8766D", "#619CFF"))
+
 
 df_SIR_long <- df_SIR %>%
-  select(province, date_observation, days_since_first, I, R) %>%
+  select(region, date_observation, days_since_first, I, R) %>%
   filter(days_since_first>=0) %>%
-  pivot_longer(cols = c(-province,-date_observation,-days_since_first),
+  pivot_longer(cols = c(-region,-date_observation,-days_since_first),
                names_to = "variable",
                values_to = "value")
 
-ggplot(data=df_SIR_long %>% filter(province == "Denmark"),
+ggplot(data=df_SIR_long %>% filter(region == "Denmark"),
        mapping = aes(x = date_observation, y = value, group = variable, color = variable)) +
   geom_point()
 
