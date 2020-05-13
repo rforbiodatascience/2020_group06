@@ -17,10 +17,9 @@ The data was obtained from Kaggle:
 
 https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
 
-And augmented with 
+And augmented withworld population data from the UN:
 
-- World population data from ...
-- More?
+https://population.un.org/wpp/Download/Standard/CSV/
 
 ## Usage
 By running the script R/00_do.R, the full data analysis can be carried out. This is especially useful if updating the data in data/_raw with the new daily numbers, as new data will be incorporated into all resulting plots.
