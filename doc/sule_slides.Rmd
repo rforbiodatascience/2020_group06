@@ -16,7 +16,7 @@ $$\frac{dS}{dt} = \beta\cdot S\cdot I $$
 $$\frac{dI}{dt} = \beta\cdot S\cdot I - \gamma\cdot I $$
 $$\frac{dR}{dt} = \gamma*I $$
 
-## Observed cases and recoveries in Denmark
+## Observed cases in Denmark
 ```{r,  out.width =  "700", fig.align = 'center'}
 knitr::include_graphics("../results/04_Denmark_obs.png")
 ```
