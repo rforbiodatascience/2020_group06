@@ -60,31 +60,30 @@ Please note that infection spreading information and data regarding COVID19 is b
 
 Outline for the presentation:
 
-- Agenda (...)                     - Sule
+- Agenda (...)
 - Introduction
-  * The dataset (where is it from) - Sebastian (Sule help)
-  * Stanley's heatmap              - Stanley
+  * The dataset (where is it from)
+  * Stanley's heatmap
 - Problem Formulation
-  * Biological insight questions   - Stanley
-  * General questions              - Sule & Stanley
+  * Biological insight questions
+  * General questions
 - Methodology (how we did things, no results)
-  * Packages                       - Sule & Stanley
-  * Data workflow                  
-    * Data import & wrangling      - Sebastian
-    * Data augmentation            - Sebastian
-  * Analysis workflow              
-    * Descriptive analytics        - Stanley
-    * SIR modeling                 - Sule
+  * Data workflow
+    * Data import & wrangling
+    * Data augmentation
+  * Analysis workflow
+    * Descriptive analytics
+    * SIR modeling
 - Results
-  * Descriptive statistics results - Sebastian, Stanley
-  * SIR modeling results           - Sule
-  * Patient symptoms results       - Sebastian, Stanley
-    - Symptom correlation plot (pivot_longer)
-- Discussion                       - Sule
-  * Shiny                          - Sule
-- Conclusion                       - All
-- "Thank you"/"Questions?" slide   - Sebastian
+  * 
+- Discussion
+  * Shiny
+- Conclusion
+- "Thank you"/"Questions?" slide
 
+
+  * Packages & dependencies
+  * Analysis workflow
 
 Data Wrangling:
 - Flowchart about data wrangling

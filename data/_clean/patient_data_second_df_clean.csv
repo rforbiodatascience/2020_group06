@@ -154,7 +154,7 @@ NA,Chongqing,China,NA,NA,NA,NA,NA,0,0,0,NA,29.95723,107.1356
 2020-01-24,Guangxi,China,female,20,20,2020-01-22,2020-01-22,1,0,0,"cough, fever, muscle pain",21.67666,109.328
 2020-01-24,Guangxi,China,male,54,54,2020-01-22,2020-01-22,1,0,0,"cough, fever",21.67666,109.328
 2020-01-24,Guangxi,China,female,33,33,2020-01-19,2020-01-21,1,0,0,fever,23.98862,106.2863
-2020-01-24,Guangxi,China,female,49,49,2020-01-21,2020-01-22,1,0,0,"chest distress, cough, sputum, muscle pain",24.64574,107.8409
+2020-01-24,Guangxi,China,female,49,49,2020-01-21,2020-01-22,1,0,0,"chest pain, cough, sputum, muscle pain",24.64574,107.8409
 2020-01-24,Guangxi,China,NA,NA,NA,NA,NA,0,0,0,NA,25.35865,110.5145
 2020-01-24,Guangxi,China,NA,NA,NA,NA,NA,0,0,0,NA,25.35865,110.5145
 2020-01-24,Guangxi,China,male,42,42,NA,2020-01-21,0,0,0,NA,24.95009,109.371
@@ -170,12 +170,12 @@ NA,Chongqing,China,NA,NA,NA,NA,NA,0,0,0,NA,29.95723,107.1356
 2020-01-24,Hainan,China,NA,NA,NA,NA,NA,0,0,0,NA,18.83795,110.2876
 2020-01-24,Hainan,China,NA,NA,NA,NA,NA,0,0,0,NA,18.83795,110.2876
 2020-01-23,Hebei,China,male,72,72,2020-01-19,2020-01-19,1,0,0,"cough, fever",38.13361,114.4384
-2020-01-23,Hebei,China,male,80,80,NA,NA,0,0,0,"chest distress, dyspnea",38.26855,116.7593
+2020-01-23,Hebei,China,male,80,80,NA,NA,0,0,0,"chest pain, dyspnea",38.26855,116.7593
 2020-01-23,Heilongjiang,China,male,49,49,2020-01-22,2020-01-22,0,0,0,"cough, sputum, fever",45.64657,127.9588
 2020-01-23,Heilongjiang,China,male,69,69,NA,2020-01-12,0,0,0,"cough, fatigue, fever, sputum",44.6065,129.8858
 2020-01-24,Heilongjiang,China,NA,NA,NA,NA,NA,0,0,0,NA,46.35607,124.699
 2020-01-24,Heilongjiang,China,NA,NA,NA,NA,NA,0,1,0,NA,46.90084,126.6487
-2020-01-21,Henan,China,male,66,66,2019-12-29,NA,1,0,0,"chest tightness, dyspnea, fever",34.62931,113.468
+2020-01-21,Henan,China,male,66,66,2019-12-29,NA,1,0,0,"chest pain, dyspnea, fever",34.62931,113.468
 2020-01-22,Henan,China,female,32,32,NA,2020-01-18,1,0,0,NA,34.36358,111.1065
 2020-01-22,Henan,China,male,28,28,NA,2020-01-09,0,0,0,NA,34.2936,112.0323
 2020-01-22,Henan,China,male,55,55,2020-01-11,2020-01-11,0,0,0,NA,34.62931,113.468
@@ -4508,7 +4508,7 @@ NA,Thailand,Thailand,NA,NA,NA,NA,NA,0,0,0,NA,15.17991,101.0156
 2020-02-01,Hunan,China,NA,NA,NA,NA,NA,0,0,0,NA,27.63327,111.7063
 2020-02-01,Hunan,China,NA,NA,NA,NA,NA,0,0,0,NA,27.63327,111.7063
 2020-02-01,Inner Mongolia,China,male,37,37,NA,NA,0,0,0,NA,41.56212,110.2561
-2020-02-01,Inner Mongolia,China,male,40,40,2020-01-29,2020-01-31,0,0,0,"chest tightness, fever, nausea",40.21311,109.8538
+2020-02-01,Inner Mongolia,China,male,40,40,2020-01-29,2020-01-31,0,0,0,"chest pain, fever, nausea",40.21311,109.8538
 2020-02-01,Inner Mongolia,China,female,57,57,NA,NA,0,0,0,NA,40.52088,110.6803
 2020-02-01,Jiangsu,China,NA,NA,16-80,NA,NA,0,0,0,NA,31.92997,118.8424
 2020-02-01,Jiangsu,China,NA,NA,16-80,NA,NA,0,0,0,NA,31.92997,118.8424
@@ -5793,7 +5793,7 @@ NA,Thailand,Thailand,NA,NA,NA,NA,NA,0,0,0,NA,15.17991,101.0156
 2020-02-02,Hunan,China,NA,NA,NA,NA,NA,0,0,0,NA,27.73964,111.6133
 2020-02-02,Qinghai,China,female,33,33,NA,2020-01-30,0,0,0,fever,36.82615,101.4437
 2020-02-02,Qinghai,China,male,43,43,NA,2020-01-31,0,0,0,NA,36.82615,101.4437
-2020-02-02,Qinghai,China,female,42,42,NA,2020-02-01,0,0,0,chest tightness,36.82615,101.4437
+2020-02-02,Qinghai,China,female,42,42,NA,2020-02-01,0,0,0,chest pain,36.82615,101.4437
 2020-02-02,Qinghai,China,male,26,26,NA,2020-01-30,0,0,0,NA,37.42092,101.7543
 2020-02-02,Ningxia,China,NA,NA,NA,NA,NA,0,0,0,NA,37.28727,106.1671
 2020-02-02,Ningxia,China,NA,NA,NA,NA,NA,0,0,0,NA,37.28727,106.1671
@@ -6459,7 +6459,7 @@ NA,Liaoning,China,NA,NA,NA,NA,NA,0,0,0,NA,40.7196,123.0077
 2020-02-04,Anhui,China,NA,NA,NA,NA,NA,0,0,0,NA,31.79444,117.3428
 2020-02-04,Anhui,China,NA,NA,NA,NA,NA,0,0,0,NA,31.79444,117.3428
 2020-02-04,Anhui,China,NA,NA,NA,NA,NA,0,0,0,NA,31.79444,117.3428
-2020-02-05,Anhui,China,female,55,55,2020-02-03,2020-02-05,0,0,0,"chest tightness, fever",31.72762,117.0201
+2020-02-05,Anhui,China,female,55,55,2020-02-03,2020-02-05,0,0,0,"chest pain, fever",31.72762,117.0201
 2020-02-05,Anhui,China,female,48,48,2020-01-30,2020-02-03,0,0,0,"fever, muscle pain",31.89544,117.3384
 2020-02-05,Anhui,China,female,43,43,2020-02-03,2020-02-04,0,0,0,fever,31.8947345,117.3260293
 2020-02-05,Anhui,China,male,35,35,2020-01-29,2020-02-03,0,0,0,fever,31.82562,117.2001
@@ -8634,7 +8634,7 @@ NA,California,US,NA,NA,NA,NA,NA,0,0,0,NA,33.03704,-116.733
 2020-02-12,Gansu,China,female,53,53,2020-02-04,2020-02-11,0,0,0,"sore throat, cough",34.33256,102.7657
 2020-02-13,Gansu,China,female,34,34,2020-02-10,2020-02-11,0,0,0,"chest pain, cough",35.20198,106.5993
 2020-02-13,Gansu,China,female,79,79,NA,2020-02-12,0,0,0,NA,35.10665,104.6236
-2020-02-13,Gansu,China,female,58,58,NA,2020-02-12,0,0,0,"cough, chest tightness, dry mouth",34.99238,103.0791
+2020-02-13,Gansu,China,female,58,58,NA,2020-02-12,0,0,0,"cough, chest pain, dry mouth",34.99238,103.0791
 2020-02-16,Gansu,China,male,57,57,2020-02-07,2020-02-14,0,0,0,"cough, fever",36.07809,103.8756
 2020-02-06,Gansu,China,female,45,45,NA,NA,0,0,0,NA,34.99238,103.0791
 2020-02-06,Gansu,China,male,67,67,NA,NA,0,0,0,NA,36.61864,104.6208
@@ -11619,7 +11619,7 @@ NA,California,US,NA,NA,NA,NA,NA,0,0,0,NA,33.03704,-116.733
 2020-02-03,Guangxi,China,NA,NA,NA,NA,NA,0,0,0,NA,24.95009,109.371
 2020-02-03,Guangxi,China,NA,NA,NA,NA,NA,0,0,0,NA,21.67666,109.328
 2020-02-03,Guangxi,China,male,62,62,2020-01-25,2020-01-29,1,0,0,"fever, fatigue",21.88401,107.9967
-2020-02-03,Guangxi,China,female,52,52,2020-01-16,2020-01-29,0,0,0,"chest tightness, fatigue",21.88401,107.9967
+2020-02-03,Guangxi,China,female,52,52,2020-01-16,2020-01-29,0,0,0,"chest pain, fatigue",21.88401,107.9967
 2020-02-03,Guangxi,China,NA,NA,NA,NA,NA,0,0,0,NA,22.1822,109.0235
 2020-02-03,Guangxi,China,NA,NA,NA,NA,NA,0,0,0,NA,24.64574,107.8409
 2020-02-03,Guangxi,China,NA,NA,NA,NA,NA,0,0,0,NA,24.64574,107.8409

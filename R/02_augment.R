@@ -1,20 +1,16 @@
-# Clear workspace
-# ------------------------------------------------------------------------------
+# Clear workspace --------------------------------------------------------------
 rm(list = ls())
 
 
-# Load libraries
-# ------------------------------------------------------------------------------
+# Load libraries ---------------------------------------------------------------
 library(tidyverse)
 
 
-# Define functions
-# ------------------------------------------------------------------------------
+# Define functions -------------------------------------------------------------
 source(file = "R/99_func.R")
 
 
-# Load data
-# ------------------------------------------------------------------------------
+# Load data --------------------------------------------------------------------
 daily_covid_trends_df <-
   read_csv('.//data//_clean//daily_covid_trends_df_clean.csv',
            col_types = cols())
@@ -53,10 +49,8 @@ population_by_country_df <-
 
 
 
-# AUGMENTING patient_data_first_df & patient_data_second_df
-# ------------------------------------------------------------------------------
-## CREATE AGE GROUPS for the two dataframes
-# ------------------------------------------------------------------------------
+# AUGMENTING patient_data_first_df & patient_data_second_df --------------------
+# CREATE AGE GROUPS for the two dataframes ------------------------------------
 patient_data_first_df <-
   patient_data_first_df %>%
   mutate(age_group = case_when(between(age, 0, 4) ~ '00-04',
@@ -98,8 +92,7 @@ patient_data_second_df <-
   select(date_observation:gender, age, age_group, date_onset:long)
 
 
-## COMBINE THE TWO PATIENT DATASETS INTO ONE
-# ------------------------------------------------------------------------------
+# COMBINE THE TWO PATIENT DATASETS INTO ONE ------------------------------------
 final_patient_data_df <-
   patient_data_first_df %>%
   full_join(patient_data_second_df,
@@ -110,8 +103,7 @@ final_patient_data_df <-
   arrange(date_observation)
 
 
-# CREATE CATEGORICAL columns for each unique symptom, making data in wide format
-# ------------------------------------------------------------------------------
+# CREATE CATEGORICAL columns for each unique symptom, turn into wide format ----
 final_patient_data_df <-
   final_patient_data_df %>%
 
@@ -175,8 +167,7 @@ final_patient_data_df <-
   select(-c('surrogate_key', 'NA'))
 
 
-# CONVERT COLS TO FACTOR
-# ------------------------------------------------------------------------------
+# CONVERT COLS TO FACTOR -------------------------------------------------------
 # The columns 'gender' and 'age_group' are categorical columns
 final_patient_data_df <-
   final_patient_data_df %>%
@@ -190,12 +181,10 @@ final_patient_data_df <-
 
 
 
-# AUGMENTING NON-US TIMESERIES DF (ts_..._df)
-# ------------------------------------------------------------------------------
-# COMBINE THE THREE TIME-SERIES DATASETS INTO ONE
-# ------------------------------------------------------------------------------
-# Rename the 'cases' column in each time-series DF, so as to facilitate joining
+# AUGMENTING NON-US TIMESERIES DF (ts_..._df) ----------------------------------
+# COMBINE THE THREE TIME-SERIES DATASETS INTO ONE ------------------------------
 
+# Rename the 'cases' column in each time-series DF, so as to facilitate joining
 ts_confirmed_world_df <-
   ts_confirmed_world_df %>%
   rename('total_confirmed' = 'cases')
@@ -222,8 +211,7 @@ final_ts_world_df <-
   mutate(total_recovered = replace_na(total_recovered, 0))
 
 
-# AUGMENT THE TIME-SERIES WITH POPULATION DATA
-# ------------------------------------------------------------------------------
+# AUGMENT THE TIME-SERIES WITH POPULATION DATA ---------------------------------
 final_ts_world_df <-
   final_ts_world_df %>%
 
@@ -276,8 +264,7 @@ final_ts_world_df <-
 
 
 
-# CREATE SIR modelling dataframe
-# ------------------------------------------------------------------------------
+# CREATE SIR modelling dataframe -----------------------------------------------
 final_ts_world_df <-
   final_ts_world_df %>%
   select(region, date_observation,
@@ -303,8 +290,7 @@ SIR_df <-
 
 
 
-# Write data
-# ------------------------------------------------------------------------------
+# Write data -------------------------------------------------------------------
 write_csv(x = final_patient_data_df,
           path = ".//data//_augmented//final_patient_data_df_augm.csv")
 write_csv(x = final_ts_world_df,

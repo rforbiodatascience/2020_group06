@@ -1,27 +1,22 @@
-# Clear workspace
-# ------------------------------------------------------------------------------
+# Clear workspace --------------------------------------------------------------
 rm(list = ls())
 
 
-# Load libraries
-# ------------------------------------------------------------------------------
+# Load libraries ---------------------------------------------------------------
 library("tidyverse")
 
 
-# Define functions
-# ------------------------------------------------------------------------------
+# Define functions -------------------------------------------------------------
 source(file = "R/99_func.R")
 
 
-# Load data
-# ------------------------------------------------------------------------------
+# Load data --------------------------------------------------------------------
 df_patient <-
   read_csv(file = "data/_augmented/final_patient_data_df_augm.csv",
            col_types = cols())
 
 
-# Plot 1: Correlation heatmap of categorical symptoms
-# ------------------------------------------------------------------------------
+# Plot 1: Correlation heatmap of categorical symptoms --------------------------
 corr_matrix_df <-
   df_patient %>%
 
@@ -54,8 +49,7 @@ ggplot(data = corr_matrix_df,
        x = "Symptom 1", y = "Symptom 2")
 
 
-# Plot 2: Symptom prevalence grouped by gender
-# ------------------------------------------------------------------------------
+# Plot 2: Symptom prevalence grouped by gender ---------------------------------
 df_patient %>%
   pivot_longer(chills:discharge,
                names_to = 'symptoms',
@@ -75,8 +69,7 @@ df_patient %>%
          y = "Symptom")
 
 
-# Plot 3: Symptom prevalence grouped by country
-# ------------------------------------------------------------------------------
+# Plot 3: Symptom prevalence grouped by country --------------------------------
 df_patient %>%
   pivot_longer(chills:discharge,
                names_to = 'symptoms',
@@ -96,8 +89,7 @@ df_patient %>%
          y = "Symptom")
 
 
-# Plot 4: Facet grid of symptom presence for dead and/or recovered patients
-# ------------------------------------------------------------------------------
+# Plot 4: Facet grid of symptom presence for dead and/or recovered patients ----
 df_patient %>%
   pivot_longer(chills:discharge,
                names_to = 'symptoms',
@@ -125,8 +117,7 @@ df_patient %>%
          y = "Symptom")
 
 
-# Plot 5: Facet plot of the symptom comorbidity
-# ------------------------------------------------------------------------------
+# Plot 5: Facet plot of the symptom comorbidity --------------------------------
 corr_matrix_df %>%
   filter(symptom1 != symptom2) %>%
   filter(value > 0.1) %>%

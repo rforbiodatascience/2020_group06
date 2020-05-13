@@ -1,21 +1,17 @@
-# Clear workspace
-# ------------------------------------------------------------------------------
+# Clear workspace --------------------------------------------------------------
 rm(list = ls())
 
 
-# Load libraries
-# ------------------------------------------------------------------------------
+# Load libraries ---------------------------------------------------------------
 library(tidyverse)
 library(lubridate)
 
 
-# Define functions
-# ------------------------------------------------------------------------------
+# Define functions -------------------------------------------------------------
 source(file = "R/99_func.R")
 
 
-# Load data
-# ------------------------------------------------------------------------------
+# Load data --------------------------------------------------------------------
 daily_covid_trends_df <-
   read_csv('.//data//_raw//covid_19_data.csv',
            col_types = cols())
@@ -54,14 +50,12 @@ population_by_country_df <-
 
 
 
-# Wrangle data from 'daily_covid_trends_df': covid_19_data.csv
-# ------------------------------------------------------------------------------
+# Wrangle data from 'daily_covid_trends_df': covid_19_data.csv -----------------
 print('The structure of daily_covid_trends_df is: ')
 str(daily_covid_trends_df)
 
 
-# RENAME COLUMNS
-# ------------------------------------------------------------------------------
+# RENAME COLUMNS ---------------------------------------------------------------
 daily_covid_trends_df <-
   daily_covid_trends_df %>%
   select(-SNo) %>%
@@ -75,8 +69,7 @@ daily_covid_trends_df <-
   rename("total_recovered" = 'Recovered')
 
 
-# Standarize PROVINCE data (removing data inconstencies)
-# ------------------------------------------------------------------------------
+# Standarize PROVINCE data (removing data inconstencies) -----------------------
 daily_covid_trends_df <-
   daily_covid_trends_df %>%
 
@@ -131,8 +124,7 @@ daily_covid_trends_df <-
   filter(province %in% c('Diamond Princess', 'Grand Princess') == FALSE)
 
 
-# Standarize COUNTRY data (removing data inconstencies
-# ------------------------------------------------------------------------------
+# Standarize COUNTRY data (removing data inconstencies -------------------------
 daily_covid_trends_df <-
   daily_covid_trends_df %>%
 
@@ -146,8 +138,8 @@ daily_covid_trends_df <-
 
   # Convert "('St. Martin',)" to 'St. Martin'
   mutate(country = str_replace_all(
-      country, pattern = "\\(\\'St. Martin\\',\\)", replacement = 'St. Martin')
-    ) %>%
+    country, pattern = "\\(\\'St. Martin\\',\\)", replacement = 'St. Martin')
+  ) %>%
 
   # Convert Congo (Brazzaville) AND Congo (Kinshasa) to 'Congo'
   mutate(country = str_replace_all(
@@ -180,8 +172,7 @@ daily_covid_trends_df <-
   filter(country != 'Others')
 
 
-# Transform MISSING VALUES in PROVINCE column
-# ------------------------------------------------------------------------------
+# Transform MISSING VALUES in PROVINCE column ----------------------------------
 # Here, if the province is unknown, we just assign it to the name of the country
 daily_covid_trends_df <-
   daily_covid_trends_df %>%
@@ -191,14 +182,12 @@ daily_covid_trends_df <-
 
 
 
-# Wrangle data from 'patient_data_first_df': COVID19_line_list_data.csv
-# ------------------------------------------------------------------------------
+# Wrangle data from 'patient_data_first_df': COVID19_line_list_data.csv --------
 print('The structure of patient_data_first_df is: ')
 str(patient_data_first_df)
 
 
-# REMOVING UNNECESSARY COLUMNS
-# ------------------------------------------------------------------------------
+# REMOVING UNNECESSARY COLUMNS -------------------------------------------------
 patient_data_first_df <-
   patient_data_first_df %>%
 
@@ -212,8 +201,7 @@ patient_data_first_df <-
   select(-c(id, source, link, If_onset_approximated, case_in_country))
 
 
-# RENAME AND WRANGLE COLUMNS
-# ------------------------------------------------------------------------------
+# RENAME AND WRANGLE COLUMNS ---------------------------------------------------
 patient_data_first_df <-
   patient_data_first_df %>%
 
@@ -259,8 +247,7 @@ patient_data_first_df <-
   rename("symptoms_set" = "symptom")
 
 
-# Standarize PROVINCE data (removing data inconstencies)
-# ------------------------------------------------------------------------------
+# Standarize PROVINCE data (removing data inconstencies) -----------------------
 patient_data_first_df <-
   patient_data_first_df %>%
 
@@ -280,8 +267,7 @@ patient_data_first_df <-
                                     replacement = 'Shanxi'))
 
 
-# Standarize COUNTRY data (removing data inconstencies
-# ------------------------------------------------------------------------------
+# Standarize COUNTRY data (removing data inconstencies -------------------------
 patient_data_first_df <-
   patient_data_first_df %>%
 
@@ -300,8 +286,7 @@ patient_data_first_df <-
                            false = country))
 
 
-# Fix small values of AGE data
-# ------------------------------------------------------------------------------
+# Fix small values of AGE data -------------------------------------------------
 patient_data_first_df <-
   patient_data_first_df %>%
 
@@ -309,8 +294,7 @@ patient_data_first_df <-
   mutate(age = if_else(age < 1, true = 1, false = age))
 
 
-# Wrangle the SYMPTOMS_SET string data
-# ------------------------------------------------------------------------------
+# Wrangle the SYMPTOMS_SET string data -----------------------------------------
 patient_data_first_df <-
   patient_data_first_df %>%
 
@@ -334,8 +318,8 @@ patient_data_first_df <-
 
   # Fix problems associated with 'sore throat'
   mutate(symptoms_set = str_replace_all(
-  symptoms_set, pattern = '(itchy throat)|(throat discomfort)|(throat pain)',
-  replacement = 'sore throat')) %>%
+    symptoms_set, pattern = '(itchy throat)|(throat discomfort)|(throat pain)',
+    replacement = 'sore throat')) %>%
 
   # Fix problems associated with 'fever'
   mutate(symptoms_set = str_replace_all(
@@ -374,14 +358,12 @@ patient_data_first_df <-
 
 
 
-# Wrangle data from 'patient_data_second_df': COVID19_open_line_list.csv
-# ------------------------------------------------------------------------------
+# Wrangle data from 'patient_data_second_df': COVID19_open_line_list.csv -------
 print('The structure of patient_data_second_df is: ')
 str(patient_data_second_df)
 
 
-# REMOVING UNNECESSARY COLUMNS
-# ------------------------------------------------------------------------------
+# REMOVING UNNECESSARY COLUMNS -------------------------------------------------
 patient_data_second_df <-
   patient_data_second_df %>%
 
@@ -399,16 +381,14 @@ patient_data_second_df <-
   select(age : date_death_or_discharge)
 
 
-# Fix MISSING VALUES in all columns
-# ------------------------------------------------------------------------------
+# Fix MISSING VALUES in all columns --------------------------------------------
 patient_data_second_df <-
   patient_data_second_df %>%
   na_if('N/A') %>%
   na_if('#N/A')
 
 
-# RENAME AND WRANGLE COLUMNS
-# ------------------------------------------------------------------------------
+# RENAME AND WRANGLE COLUMNS ---------------------------------------------------
 patient_data_second_df <-
   patient_data_second_df %>%
 
@@ -441,7 +421,7 @@ patient_data_second_df <-
     str_detect(lives_in_Wuhan,
                pattern = ('(0)|([nN]o)|(Chinese)|(live(d)? in.*)|
                           (thai.*)|(used to be)|(.*resident.*)')
-              ) ~ 0, TRUE ~ 1)) %>%
+    ) ~ 0, TRUE ~ 1)) %>%
 
   # Remove the old Wuhan-related columns
   select(-c(lives_in_Wuhan)) %>%
@@ -470,8 +450,7 @@ patient_data_second_df <-
   select(one_of(colnames(patient_data_first_df)), everything())
 
 
-# Standarize PROVINCE data (removing data inconstencies
-# ------------------------------------------------------------------------------
+# Standarize PROVINCE data (removing data inconstencies ------------------------
 patient_data_second_df <-
   patient_data_second_df %>%
 
@@ -487,8 +466,7 @@ patient_data_second_df <-
     province, pattern = 'Shaanxi', replacement = 'Shanxi'))
 
 
-# Standarize COUNTRY data (removing data inconstencies
-# ------------------------------------------------------------------------------
+# Standarize COUNTRY data (removing data inconstencies -------------------------
 patient_data_second_df <-
   patient_data_second_df %>%
 
@@ -519,8 +497,7 @@ patient_data_second_df <-
                              TRUE ~ country))
 
 
-# Replace missing values in PROVINCE & COUNTRY data
-# ------------------------------------------------------------------------------
+# Replace missing values in PROVINCE & COUNTRY data ----------------------------
 patient_data_second_df <-
   patient_data_second_df %>%
   mutate(province = if_else(is.na(province) == TRUE,
@@ -533,8 +510,7 @@ patient_data_second_df <-
   filter(is.na(province) == FALSE)
 
 
-# Fix small values of AGE data
-# ------------------------------------------------------------------------------
+# Fix small values of AGE data -------------------------------------------------
 patient_data_second_df <-
   patient_data_second_df %>%
 
@@ -549,8 +525,7 @@ patient_data_second_df <-
   mutate(age_dbl = round(age_dbl))
 
 
-# Wrangle the SYMPTOMS_SET string data
-# ------------------------------------------------------------------------------
+# Wrangle the SYMPTOMS_SET string data -----------------------------------------
 patient_data_second_df <-
   patient_data_second_df %>%
 
@@ -794,14 +769,12 @@ patient_data_second_df <-
 
 
 
-# Wrangle data from 'ts_confirmed_world_df': time_series_covid_19_confirmed.csv
-# ------------------------------------------------------------------------------
+# Wrangle df 'ts_confirmed_world_df': time_series_covid_19_confirmed.csv -------
 print('The structure of ts_confirmed_world_df is: ')
 str(ts_confirmed_world_df)
 
 
-# RENAME COLUMNS
-# ------------------------------------------------------------------------------
+# RENAME COLUMNS ---------------------------------------------------------------
 ts_confirmed_world_df <-
   ts_confirmed_world_df %>%
 
@@ -816,8 +789,7 @@ ts_confirmed_world_df <-
   rename('long' = 'Long')
 
 
-# Fix values in PROVINCE column
-# ------------------------------------------------------------------------------
+# Fix values in PROVINCE column ------------------------------------------------
 ts_confirmed_world_df <-
   ts_confirmed_world_df %>%
   mutate(province = str_replace_all(
@@ -828,8 +800,7 @@ ts_confirmed_world_df <-
   na_if('Bonaire, Sint Eustatius and Saba')
 
 
-# Fix values in COUNTRY column
-# ------------------------------------------------------------------------------
+# Fix values in COUNTRY column -------------------------------------------------
 ts_confirmed_world_df <-
   ts_confirmed_world_df %>%
 
@@ -893,8 +864,7 @@ ts_confirmed_world_df <-
                              TRUE ~ country))
 
 
-# Transform MISSING VALUES in PROVINCE column
-# ------------------------------------------------------------------------------
+# Transform MISSING VALUES in PROVINCE column ----------------------------------
 # If the province is unknown, we just assign it to the name of the country
 ts_confirmed_world_df <-
   ts_confirmed_world_df %>%
@@ -903,8 +873,7 @@ ts_confirmed_world_df <-
                             false = province))
 
 
-# TIDY the dataset into LONG FORMAT
-# ------------------------------------------------------------------------------
+# TIDY the dataset into LONG FORMAT --------------------------------------------
 ts_confirmed_world_df <-
   ts_confirmed_world_df %>%
   pivot_longer(-c(1:4),
@@ -912,15 +881,13 @@ ts_confirmed_world_df <-
                values_to = 'cases')
 
 
-# CONVERT DATES from chr to date
-# ------------------------------------------------------------------------------
+# CONVERT DATES from chr to date -----------------------------------------------
 ts_confirmed_world_df <-
   ts_confirmed_world_df %>%
   mutate(date_observation = mdy(date_observation))
 
 
-# AGGREGATE CASES for Canada
-# ------------------------------------------------------------------------------
+# AGGREGATE CASES for Canada ---------------------------------------------------
 # Canada is the only country in the dataset that has a problem,
 # its values for 'confirmed' and 'deaths' are aggregated within provinces,
 # however the values for 'recovered' are aggregated across the country
@@ -955,14 +922,12 @@ ts_confirmed_world_df <-
 
 
 
-# Wrangle data from 'ts_confirmed_US_df': time_series_covid_19_confirmed_US.csv
-# ------------------------------------------------------------------------------
+# Wrangle DF 'ts_confirmed_US_df': time_series_covid_19_confirmed_US.csv -------
 print('The structure of ts_confirmed_US_df is: ')
 str(ts_confirmed_US_df)
 
 
-# REMOVING UNNECESSARY COLUMNS
-# ------------------------------------------------------------------------------
+# REMOVING UNNECESSARY COLUMNS -------------------------------------------------
 ts_confirmed_US_df <-
   ts_confirmed_US_df %>%
 
@@ -973,8 +938,7 @@ ts_confirmed_US_df <-
   select(-Combined_Key)
 
 
-# RENAME COLUMNS
-# ------------------------------------------------------------------------------
+# RENAME COLUMNS ---------------------------------------------------------------
 ts_confirmed_US_df <-
   ts_confirmed_US_df %>%
 
@@ -992,8 +956,7 @@ ts_confirmed_US_df <-
   rename('long' = 'Long_')
 
 
-# TIDY the dataset into LONG FORMAT
-# ------------------------------------------------------------------------------
+# TIDY the dataset into LONG FORMAT --------------------------------------------
 ts_confirmed_US_df <-
   ts_confirmed_US_df %>%
   pivot_longer(-c(1:5),
@@ -1001,22 +964,19 @@ ts_confirmed_US_df <-
                values_to = 'cases')
 
 
-# CONVERT DATES from chr to date
-# ------------------------------------------------------------------------------
+# CONVERT DATES from chr to date -----------------------------------------------
 ts_confirmed_US_df <-
   ts_confirmed_US_df %>%
   mutate(date_observation = mdy(date_observation))
 
 
 
-# Wrangle data from 'ts_deaths_world_df': time_series_covid_19_deaths.csv
-# ------------------------------------------------------------------------------
+# Wrangle data from 'ts_deaths_world_df': time_series_covid_19_deaths.csv ------
 print('The structure of ts_deaths_world_df is: ')
 str(ts_deaths_world_df)
 
 
-# RENAME COLUMNS
-# ------------------------------------------------------------------------------
+# RENAME COLUMNS ---------------------------------------------------------------
 ts_deaths_world_df <-
   ts_deaths_world_df %>%
 
@@ -1031,8 +991,7 @@ ts_deaths_world_df <-
   rename('long' = 'Long')
 
 
-# Fix values in PROVINCE column
-# ------------------------------------------------------------------------------
+# Fix values in PROVINCE column ------------------------------------------------
 ts_deaths_world_df <-
   ts_deaths_world_df %>%
   mutate(province = str_replace_all(province, pattern = 'Shaanxi',
@@ -1042,8 +1001,7 @@ ts_deaths_world_df <-
   na_if('Bonaire, Sint Eustatius and Saba')
 
 
-# Fix values in COUNTRY column
-# ------------------------------------------------------------------------------
+# Fix values in COUNTRY column -------------------------------------------------
 ts_deaths_world_df <-
   ts_deaths_world_df %>%
 
@@ -1108,8 +1066,7 @@ ts_deaths_world_df <-
 
 
 
-# Transform MISSING VALUES in PROVINCE column
-# ------------------------------------------------------------------------------
+# Transform MISSING VALUES in PROVINCE column ----------------------------------
 # If the province is unknown, we just assign it to the name of the country
 ts_deaths_world_df <-
   ts_deaths_world_df %>%
@@ -1118,8 +1075,7 @@ ts_deaths_world_df <-
                             false = province))
 
 
-# TIDY the dataset into LONG FORMAT
-# ------------------------------------------------------------------------------
+# TIDY the dataset into LONG FORMAT --------------------------------------------
 ts_deaths_world_df <-
   ts_deaths_world_df %>%
   pivot_longer(-c(1:4),
@@ -1127,15 +1083,13 @@ ts_deaths_world_df <-
                values_to = 'cases')
 
 
-# CONVERT DATES from chr to date
-# ------------------------------------------------------------------------------
+# CONVERT DATES from chr to date -----------------------------------------------
 ts_deaths_world_df <-
   ts_deaths_world_df %>%
   mutate(date_observation = mdy(date_observation))
 
 
-# AGGREGATE CASES for Canada
-# ------------------------------------------------------------------------------
+# AGGREGATE CASES for Canada ---------------------------------------------------
 # Canada is the only country in the dataset that has a problem,
 # its values for 'confirmed' and 'deaths' are aggregated within provinces,
 # however the values for 'recovered' are aggregated across the country
@@ -1170,14 +1124,12 @@ ts_deaths_world_df <-
 
 
 
-# Wrangle data from 'ts_deaths_US_df': time_series_covid_19_deaths_US.csv
-# ------------------------------------------------------------------------------
+# Wrangle data from 'ts_deaths_US_df': time_series_covid_19_deaths_US.csv ------
 print('The structure of ts_deaths_US_df is: ')
 str(ts_deaths_US_df)
 
 
-# REMOVING UNNECESSARY COLUMNS
-# ------------------------------------------------------------------------------
+# REMOVING UNNECESSARY COLUMNS -------------------------------------------------
 ts_deaths_US_df <-
   ts_deaths_US_df %>%
 
@@ -1191,8 +1143,7 @@ ts_deaths_US_df <-
   select(-Population)
 
 
-# RENAME COLUMNS
-# ------------------------------------------------------------------------------
+# RENAME COLUMNS ---------------------------------------------------------------
 ts_deaths_US_df <-
   ts_deaths_US_df %>%
 
@@ -1210,8 +1161,7 @@ ts_deaths_US_df <-
   rename('long' = 'Long_')
 
 
-# TIDY the dataset into LONG FORMAT
-# ------------------------------------------------------------------------------
+# TIDY the dataset into LONG FORMAT --------------------------------------------
 ts_deaths_US_df <-
   ts_deaths_US_df %>%
   pivot_longer(-c(1:5),
@@ -1219,22 +1169,19 @@ ts_deaths_US_df <-
                values_to = 'cases')
 
 
-# CONVERT DATES from chr to date
-# ------------------------------------------------------------------------------
+# CONVERT DATES from chr to date -----------------------------------------------
 ts_deaths_US_df <-
   ts_deaths_US_df %>%
   mutate(date_observation = mdy(date_observation))
 
 
 
-# Wrangle data from 'ts_recovered_world_df': time_series_covid_19_recovered.csv
-# ------------------------------------------------------------------------------
+# Wrangle DF 'ts_recovered_world_df': time_series_covid_19_recovered.csv -------
 print('The structure of ts_recovered_world_df is: ')
 str(ts_recovered_world_df)
 
 
-# RENAME COLUMNS
-# ------------------------------------------------------------------------------
+# RENAME COLUMNS ---------------------------------------------------------------
 ts_recovered_world_df <-
   ts_recovered_world_df %>%
 
@@ -1249,8 +1196,7 @@ ts_recovered_world_df <-
   rename('long' = 'Long')
 
 
-# Fix values in PROVINCE column
-# ------------------------------------------------------------------------------
+# Fix values in PROVINCE column ------------------------------------------------
 ts_recovered_world_df <-
   ts_recovered_world_df %>%
   mutate(province = str_replace_all(
@@ -1260,8 +1206,7 @@ ts_recovered_world_df <-
   na_if('Bonaire, Sint Eustatius and Saba')
 
 
-# Fix values in COUNTRY column
-# ------------------------------------------------------------------------------
+# Fix values in COUNTRY column -------------------------------------------------
 ts_recovered_world_df <-
   ts_recovered_world_df %>%
 
@@ -1325,8 +1270,7 @@ ts_recovered_world_df <-
                              TRUE ~ country))
 
 
-# Transform MISSING VALUES in PROVINCE column
-# ------------------------------------------------------------------------------
+# Transform MISSING VALUES in PROVINCE column ----------------------------------
 # If the province is unknown, we just assign it to the name of the country
 ts_recovered_world_df <-
   ts_recovered_world_df %>%
@@ -1335,8 +1279,7 @@ ts_recovered_world_df <-
                             false = province))
 
 
-# TIDY the dataset into LONG FORMAT
-# ------------------------------------------------------------------------------
+# TIDY the dataset into LONG FORMAT --------------------------------------------
 ts_recovered_world_df <-
   ts_recovered_world_df %>%
   pivot_longer(-c(1:4),
@@ -1348,8 +1291,7 @@ ts_recovered_world_df <-
   mutate(date_observation = mdy(date_observation))
 
 
-# AGGREGATE CASES for Canada
-# ------------------------------------------------------------------------------
+# AGGREGATE CASES for Canada ---------------------------------------------------
 # Canada is the only country in the dataset that has a problem,
 # its values for 'confirmed' and 'deaths' are aggregated within provinces,
 # however the values for 'recovered' are aggregated across the country
@@ -1386,8 +1328,7 @@ ts_recovered_world_df <-
 
 
 
-# Wrangle data from 'population_by_country_df': wpp2019_total_population.csv
-# ------------------------------------------------------------------------------
+# Wrangle DF  'population_by_country_df': wpp2019_total_population.csv ---------
 population_by_country_df <-
   population_by_country_df %>%
   filter(country %in% daily_covid_trends_df$country) %>%
@@ -1396,8 +1337,7 @@ population_by_country_df <-
 
 
 
-# Write data
-# ------------------------------------------------------------------------------
+# Write data -------------------------------------------------------------------
 write_csv(x = daily_covid_trends_df,
           path = ".//data//_clean//daily_covid_trends_df_clean.csv")
 write_csv(x = patient_data_first_df,
