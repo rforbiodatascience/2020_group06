@@ -275,7 +275,7 @@ table_df_ts_models_stats<- df_ts_models %>%
   select(region, ts, term:p.value) %>%
   head(10)
 
-linear_models_per_country<- grid.arrange(top="Linear Models per country",
+linear_models_per_country<- grid.arrange(top="Linear models statistics per country",
                                          tableGrob(table_df_ts_models_stats))
 
 ggsave(path = "results", "table_df_ts_models_stats.png",
