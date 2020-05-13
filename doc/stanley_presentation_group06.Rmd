@@ -126,10 +126,30 @@ ggdraw() +
 
 ```
 
-# Analytics
+# Descriptive
 
 
-## Gender dependency
+## Data distribution among age and gender
+
+- Mostly male patients are affected
+- Most occuring ages among the affected are between 30-59 years old
+
+```{r fig.align="center"}
+
+distribution_age_group_gender <- load.image("../results/distribution_age_group_gender.png")
+
+ggdraw() +
+  draw_image(distribution_age_group_gender, scale = 1,
+  clip = "on")
+
+```
+
+
+
+## Differences in age
+
+- Older people are likely to die
+- Only (male) patients without contact with Wuhan died while having dyspnea
 
 ```{r fig.align="center"}
 
@@ -140,5 +160,197 @@ ggdraw() +
   clip = "on")
 
 ```
+
+## Prevalence of symptoms
+
+- fever, cough and sore throat are the most frequent symptoms observed among the patients
+
+```{r fig.align="center"}
+
+Prevalence_symptoms <- load.image("../results/Prevalence_symptoms.png")
+
+ggdraw() +
+  draw_image(Prevalence_symptoms, scale = 1,
+  clip = "on")
+
+```
+
+## Time to admission
+
+- The time from experiencing symptoms to hospitalization does not tend to differ whether the patient have been in contact with Wuhan or not.
+
+```{r fig.align="center"}
+
+onset_to_admission <- load.image("../results/onset_to_admission.png")
+
+ggdraw() +
+  draw_image(onset_to_admission, scale = 1,
+  clip = "on")
+
+```
+
+# Time series
+
+
+## Total confirmed cases per million population
+
+*selected countries
+
+- Sweden have most confirmed cases and Philippines
+
+```{r fig.align="center"}
+
+confirmed_per_mill <- load.image("../results/confirmed_per_mill.png")
+
+ggdraw() +
+  draw_image(confirmed_per_mill, scale = 1,
+  clip = "on")
+  
+
+```
+
+
+## Total death cases per million population
+
+- Romania and Turkey have approx. same deaths per million population
+
+```{r fig.align="center"}
+
+deaths_per_mill <- load.image("../results/deaths_per_mill.png")
+
+ggdraw() +
+  draw_image(deaths_per_mill, scale = 1,
+  clip = "on")
+
+```
+
+
+## Total confirmed and death cases per million population, DK vs. SE
+
+- There is a higher tendency to die if you are from Sweden
+
+```{r fig.align="center"}
+
+confirmed_death_per_mil_pop <- load.image("../results/confirmed_death_per_mil_pop.png")
+
+ggdraw() +
+  draw_image(confirmed_death_per_mil_pop, scale = 1,
+  clip = "on")
+
+```
+
+
+# Linear Models
+
+## Linear regression model of the 5 countries (confirmed cases)
+
+- All coefficients are significant
+
+```{r fig.align="center"}
+
+table_df_ts_models_stats <- load.image("../results/table_df_ts_models_stats.png")
+
+ggdraw() +
+  draw_image(table_df_ts_models_stats, scale = 1,
+  clip = "on")
+
+```
+
+
+## Model evaluation of the confirmed cases
+
+- Sweden with the highest rate of confirmed cases
+
+```{r fig.align="center"}
+
+model_eval_confirmed <- load.image("../results/model_eval_confirmed.png")
+
+ggdraw() +
+  draw_image(model_eval_confirmed, scale = 1,
+  clip = "on")
+
+```
+
+
+## Model evaluation of the death cases
+
+- Sweden have approx. 3 times higher death rate compared to Denmark
+
+```{r fig.align="center"}
+
+model_eval_death <- load.image("../results/model_eval_death.png")
+
+ggdraw() +
+  draw_image(model_eval_death, scale = 1,
+  clip = "on")
+
+```
+
+
+
+## Model evaluation: Residuals
+
+- The model residuals for the death cases have approx. zero mean and constant variance, which is not the case for the confirmed cases.
+
+```{r fig.align="center"}
+
+model_eval_residuals <- load.image("../results/model_eval_residuals.png")
+
+ggdraw() +
+  draw_image(model_eval_residuals, scale = 1,
+  clip = "on")
+
+```
+
+
+# Dimensional reduction and Machine Learning
+
+## PCA
+
+- The first three PCs account for ~60% of the variance
+
+```{r fig.align="center"}
+
+pca_biological_features <- load.image("../results/pca_biological_features.png")
+
+ggdraw() +
+  draw_image(pca_biological_features, scale = 1,
+  clip = "on")
+
+```
+
+
+## Predicting patient progression
+
+- Divided between training- and test set (80/20), plot performed on training set
+- If you have been in contact with Wuhan and your age is equal to or above 73 years old, the probability of being dead is 92%
+
+```{r fig.align="center"}
+
+df_patient_dec_fit <- load.image("../results/df_patient_dec_fit.png")
+
+ggdraw() +
+  draw_image(df_patient_dec_fit, scale = 1,
+  clip = "on")
+
+```
+
+
+## Evaluation of the decision tree
+
+- Rows are the true classes and the columns are the predicted classes
+- Accuracy = 97.6%
+
+```{r fig.align="center"}
+
+table_cm_plot <- load.image("../results/table_cm_plot.png")
+
+ggdraw() +
+  draw_image(table_cm_plot, scale = 1,
+  clip = "on")
+
+```
+
+
 
 
